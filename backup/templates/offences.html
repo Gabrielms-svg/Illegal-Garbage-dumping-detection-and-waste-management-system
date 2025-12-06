@@ -1,0 +1,174 @@
+
+{% load static %}
+{% include 'header.html' %}
+
+    <style>
+        .offence-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .offence-card {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .offence-card:hover {
+            transform: scale(1.02);
+        }
+
+        .badge-location {
+            background-color: #0d6efd;
+        }
+  
+    </style>
+    <!-- Page Header -->
+    <div class="container-fluid bg-primary py-5 mb-5">
+        <div class="container text-center text-white py-5">
+            <h1 class="display-4"> Latest Offences</h1>
+            <p class="lead">Recent illegal dumping incidents detected </p>
+        </div>
+    </div>
+
+    <!-- Latest Offences Section -->
+    <div class="container pb-5">
+        <div class="text-center mb-5">
+            <h3 class="text-primary">Recent Offence Reports</h3>
+            <p class="text-muted">Automatically detected and verified dumping activities</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Offence Card 1 -->
+            <div class="col-md-4">
+                <div class="offence-card bg-white shadow-sm rounded p-3">
+                    <img src="{% static 'img/offence1.jpg' %}" alt="Offence 1">
+                    <div class="mt-3">
+                        <h5>Plastic Waste Near River Bank</h5>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event"></i> Oct 12, 2025 • 03:24 PM</p>
+                        <span class="badge badge-location text-white"><i class="bi bi-geo-alt"></i> Chalakudy RIver</span>
+                        <p class="mt-2 small">Detected by CAM-07 with 92% confidence. Immediate cleanup requested.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offence Card 2 -->
+            <div class="col-md-4">
+                <div class="offence-card bg-white shadow-sm rounded p-3">
+                    <img src="{% static 'img/offence2.jpg' %}" alt="Offence 2">
+                    <div class="mt-3">
+                        <h5>Construction Debris near Meloor</h5>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event"></i> Oct 11, 2025 • 10:08 AM</p>
+                        <span class="badge badge-location text-white"><i class="bi bi-geo-alt"></i> Hilltop Alley</span>
+                        <p class="mt-2 small">Large vehicle caught dumping concrete waste. Report forwarded to authorities.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offence Card 3 -->
+            <div class="col-md-4">
+                <div class="offence-card bg-white shadow-sm rounded p-3">
+                    <img src="{% static 'img/offence3.jpg' %}" alt="Offence 3">
+                    <div class="mt-3">
+                        <h5>Household Garbage at Public Park</h5>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event"></i> Oct 10, 2025 • 07:16 PM</p>
+                        <span class="badge badge-location text-white"><i class="bi bi-geo-alt"></i> Irinjalakuda park</span>
+                        <p class="mt-2 small">Identified by SmartCam AI with 89% confidence. Repeat violation flagged.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offence Card 4 -->
+            <div class="col-md-4">
+                <div class="offence-card bg-white shadow-sm rounded p-3">
+                    <img src="{% static 'img/offence4.jpeg' %}" alt="Offence 4">
+                    <div class="mt-3">
+                        <h5>Illegal Dumping Behind Market</h5>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event"></i> Oct 09, 2025 • 09:32 AM</p>
+                        <span class="badge badge-location text-white"><i class="bi bi-geo-alt"></i> Chalakudy Market</span>
+                        <p class="mt-2 small">Bags of food waste and plastic detected. Report sent for municipal inspection.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offence Card 5 -->
+            <div class="col-md-4">
+                <div class="offence-card bg-white shadow-sm rounded p-3">
+                    <img src="{% static 'img/offence5.jpg' %}" alt="Offence 5">
+                    <div class="mt-3">
+                        <h5>Hazardous Material Spill</h5>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event"></i> Oct 08, 2025 • 01:45 PM</p>
+                        <span class="badge badge-location text-white"><i class="bi bi-geo-alt"></i> Industrial Zone</span>
+                        <p class="mt-2 small">Oil spill detected on roadside. Cleanup crew notified immediately.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offence Card 6 -->
+            <div class="col-md-4">
+                <div class="offence-card bg-white shadow-sm rounded p-3">
+                    <img src="{% static 'img/offence6.jpg' %}" alt="Offence 6">
+                    <div class="mt-3">
+                        <h5>Overflowing Garbage Bin Area</h5>
+                        <p class="text-muted mb-1"><i class="bi bi-calendar-event"></i> Oct 07, 2025 • 08:12 PM</p>
+                        <span class="badge badge-location text-white"><i class="bi bi-geo-alt"></i> Main Street</span>
+                        <p class="mt-2 small">Detected continuous overflow. Recommended increase in collection frequency.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="container-fluid bg-dark text-light mt-5 py-5">
+        <div class="container pt-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="text-white mb-4">Quick Links</h3>
+                    <div class="d-flex flex-column justify-content-start">
+                        <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Home</a>
+                        <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>About Us</a>
+                        <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Services</a>
+                        <a class="text-light" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Contact</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="text-white mb-4">Contact</h3>
+                    <p><i class="bi bi-geo-alt text-primary me-2"></i>Irinjalakuda </p>
+                    <p><i class="bi bi-envelope-open text-primary me-2"></i>team3@gmail.com</p>
+                    <p><i class="bi bi-telephone text-primary me-2"></i>+91 9834237678</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="text-white mb-4">Follow Us</h3>
+                    <div class="d-flex">
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded me-2" href="#"><i
+                                class="fab fa-twitter fw-normal"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded me-2" href="#"><i
+                                class="fab fa-facebook-f fw-normal"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i
+                                class="fab fa-linkedin-in fw-normal"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-primary text-light py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; <a class="text-white border-bottom" href="#">Garbage dumping detection system</a>. All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-secondary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

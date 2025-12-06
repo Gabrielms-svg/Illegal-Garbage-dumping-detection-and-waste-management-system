@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Authority Login - Dump Surveillance AI</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Perfect Centered Card --- */
+        .auth-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .auth-form {
+            width: 100%;
+            max-width: 380px;
+            background: #fff;
+            padding: 35px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+
+        .auth-form label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .password-input {
+            position: relative;
+        }
+
+        .password-input .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+        }
+
+        /* --- Button --- */
+        .btn-primary {
+            width: 100%;
+            padding: 12px 0;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* --- Footer Styling --- */
+        footer {
+            background: #111;
+            color: #eee;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-about,
+        .footer-contact {
+            width: 280px;
+        }
+
+        .footer-logo {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .footer-logo span {
+            color: #ff8f00;
+        }
+
+        .footer-contact p i {
+            margin-right: 8px;
+            color: #ff8f00;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .authority-warning {
+            background: #fff4d6;
+            padding: 12px 20px;
+            border-left: 4px solid #ff8f00;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .hero h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-trash-alt"></i></div>
+                    <div class="logo-text">Dump<span>Surveillance AI</span></div>
+                </div>
+
+                <div class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+
+                <div class="nav-links" id="navLinks">
+                    <a href="{% url 'home' %} ">Home</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <h1>Government Authority Login</h1>
+        </div>
+    </section>
+
+    <!-- LOGIN CONTENT -->
+    <section class="container auth-section">
+
+        <div class="authority-warning">
+            <p><i class="fas fa-shield-alt"></i> <strong>Restricted Access:</strong> Authorized government personnel only.</p>
+        </div>
+
+        <!-- Login Form -->
+        <form method="POST" action="#" class="auth-form" id="loginForm">
+             {% csrf_token %}
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-id-card"></i> Authority ID
+                </label>
+                <input type="text" id="email" name="email" placeholder="Enter your authority ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-key"></i> Security Password
+                </label>
+                <div class="password-input">
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                    <span class="toggle-password" id="togglePassword"><i class="fas fa-eye"></i></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="background-color:#ff8f00;">
+                <i class="fas fa-lock"></i> Secure Login
+            </button>
+        </form>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="about">
+        <div class="container">
+
+            <div class="footer-content">
+
+                <div class="footer-about">
+                    <div class="footer-logo">Dump<span>Surveillance AI</span></div>
+                    <p>AI-powered illegal dump detection & environmental monitoring system.</p>
+                </div>
+
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> info@dumpsurveillance.ai</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Eco Street, Green City</p>
+                </div>
+
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2025 Dump Surveillance AI. All rights reserved.</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", () => {
+            const password = document.getElementById("password");
+            password.type = password.type === "password" ? "text" : "password";
+        });
+    </script>
+
+</body>
+</html>

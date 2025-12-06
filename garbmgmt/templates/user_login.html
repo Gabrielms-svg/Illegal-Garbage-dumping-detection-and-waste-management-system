@@ -1,0 +1,291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login - Dump Surveillance AI</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ---------- Page Aesthetics ---------- */
+        body {
+            background: #f5f7fa;
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .toast {
+         position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #e74c3c; /* Red for error */
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        header {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        /* ---------- Centered Login Box ---------- */
+        .auth-section {
+            padding: 70px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-container {
+            max-width: 420px;
+            width: 100%;
+            margin: auto;
+            background: #fff;
+            padding: 35px 40px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.10);
+        }
+
+        .auth-header h1 {
+            font-size: 26px;
+            margin: 5px 0;
+            color: #222;
+        }
+
+        .auth-header p {
+            margin-bottom: 25px;
+            color: #666;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #d2d6dc;
+            font-size: 15px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff8f00;
+            box-shadow: 0 0 5px rgba(255,143,0,0.25);
+        }
+
+        .btn-primary {
+            background: #ff8f00;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #e57d00;
+        }
+
+        /* ---------- Footer Styling ---------- */
+        footer {
+            background: #111827;
+            padding: 50px 0;
+            margin-top: 50px;
+            color: #e5e7eb;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-content div {
+            width: 30%;
+            min-width: 200px;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .footer-links ul {
+            padding: 0;
+            list-style: none;
+            line-height: 28px;
+        }
+
+        .footer-links a {
+            color: #d1d5db;
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: #ff8f00;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 20px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* Mobile Fix */
+        @media (max-width: 768px) {
+            .footer-content {
+                text-align: center;
+            }
+            .footer-content div {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="logo">
+                    <a href="{% url 'home' %}" style="display: flex; align-items: center; gap: 10px;">
+                        <div class="logo-icon">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div class="logo-text">Dump<span>Surveillance AI</span></div>
+                    </a>
+                </div>
+
+                <a href="{% url 'home' %}" class="nav-links">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            
+            <div class="auth-header">
+                <span class="login-type-badge" style="color:#ff8f00; font-weight:600;">User Login</span>
+                <h1>Welcome Back</h1>
+                <p>Sign in to your Dump Surveillance AI account</p>
+            </div>
+
+            <!-- Login Form -->
+            <form method="POST" class="auth-form" id="loginForm" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i>  Email</label>
+                    <input type="text" id="username" name="email" placeholder="Enter username or email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <div class="password-input" style="position: relative;">
+                        <input type="password" id="password" name="password" placeholder="Enter password" required>
+                        <span style="position:absolute; right:12px; top:12px; cursor:pointer;" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <div id="toast" class="toast"></div>
+
+                <button type="submit" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+               
+
+            </form>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+
+                <div class="footer-about">
+                    <div class="footer-logo">Dump<span>Surveillance AI</span></div>
+                    <p>AI-powered illegal waste detection, monitoring, and reporting system.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="#">User Login</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h3>Need Help?</h3>
+                    <p><i class="fas fa-envelope"></i> support@dumpsurveillance.ai</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                </div>
+
+            </div>
+
+            <div class="copyright">
+                <p>&copy; Dump Surveillance AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toast = document.getElementById('toast');
+
+        {% if messages %}
+            {% for message in messages %}
+                toast.textContent = "{{ message }}";
+                toast.classList.add('show');
+
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            {% endfor %}
+        {% endif %}
+    });
+    </script>
+
+    <script>
+        document.getElementById("togglePassword").onclick = function () {
+            const pwd = document.getElementById("password");
+            pwd.type = pwd.type === "password" ? "text" : "password";
+        };
+    </script>
+
+</body>
+</html>

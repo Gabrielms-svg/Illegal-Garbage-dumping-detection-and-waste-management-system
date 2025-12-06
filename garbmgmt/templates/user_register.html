@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Dump Surveillance AI</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo">
+                <a href="#" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                    <div class="logo-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <div class="logo-text">Dump<span>Surveillance AI</span></div>
+                </a>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <div class="nav-links" id="navLinks">
+                <a href="{% url 'home' %}">Home</a>
+
+                <div class="dropdown" id="loginDropdown">
+                    <div class="dropdown-btn">
+                        Login <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="{% url 'user_login' %}">User Login</a>
+                        
+                    </div>
+                </div>
+
+                <a href="#" class="btn btn-outline active">Register</a>
+                
+            </div>
+        </nav>
+    </div>
+</header>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Create Your Account</h1>
+                <p>Join Dump Surveillance AI to help combat illegal dumping.</p>
+            </div>
+
+            <!-- Registration Form -->
+            <form method="POST" enctype="multipart/form-data" class="auth-form">
+                {% csrf_token %}
+                <!-- FULL NAME -->
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Full Name</label>
+                    <input type="text" name="fullname" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> User Name</label>
+                    <input type="text" name="username" placeholder="Enter your full name" required>
+                </div>
+
+                <!-- PHONE -->
+                <div class="form-group">
+                    <label><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="text" name="phone" placeholder="Enter phone number" required>
+                </div>
+
+                <!-- EMAIL -->
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" name="email" placeholder="Enter email" required>
+                </div>
+
+                <!-- PROFILE PHOTO -->
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Profile Photo</label>
+                    <input type="file" name="profile" accept="image/*" required>
+                </div>
+
+                <div class="form-row">
+                    <!-- PASSWORD -->
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" name="password1" id="password1" placeholder="Create password" required>
+                    </div>
+
+                    <!-- CONFIRM PASSWORD -->
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Confirm Password</label>
+                        <input type="password" name="password2" id="password2" placeholder="Confirm password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-user-plus"></i> Register Account
+                </button>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="#">Sign In</a></p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-about">
+                <div class="footer-logo">Dump<span>Surveillance AI</span></div>
+                <p>AI-powered illegal dump detection and waste management system.</p>
+            </div>
+
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Register</a></li>
+                    <li><a href="#">User Login</a></li>
+                    <li><a href="#">Authority Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> info@dumpsurveillance.ai</p>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+            </div>
+        </div>
+        <p style="text-align:center;">© 2025 Dump Surveillance AI</p>
+    </div>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/auth.js' %}"></script>
+
+</body>
+</html>

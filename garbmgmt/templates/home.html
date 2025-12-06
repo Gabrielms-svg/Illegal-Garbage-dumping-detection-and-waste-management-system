@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dump Surveillance AI - Illegal Dump Detection</title>
+
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <div class="logo-icon"><i class="fas fa-trash-alt"></i></div>
+                    <div class="logo-text">Dump<span>Surveillance AI</span></div>
+                </div>
+
+                <div class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+
+                <div class="nav-links" id="navLinks">
+                    
+
+                    <div class="dropdown" id="loginDropdown">
+                        <div class="dropdown-btn">
+                            Login <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="{% url 'user_login' %}" >User Login</a>
+                            <a href="{% url 'auth_login' %}">Authority (Government) Login</a>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'user_register' %}" class="btn btn-outline">Register</a>
+                    
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Intelligent Illegal Dump Detection</h1>
+            <p>An AI-powered platform to detect illegal garbage dumping, manage waste responsibly, find legal disposal sites near you, and report offenses instantly..</p>
+            
+        </div>
+    </section>
+
+    <!-- Recent Offenses (STATIC ONLY) -->
+    <section class="container">
+        <div class="section-title">
+            <h2>Recent Illegal Dumps</h2>
+            <p>Latest reported illegal dumping activities.</p>
+        </div>
+
+        <div class="offenses-grid" id="recent-offenses">
+
+            <!-- Offense 1 -->
+            <div class="offense-card">
+                <img src=""
+                     alt="Illegal dump site" class="offense-img">
+                <div class="offense-details">
+                    <div class="offense-meta">
+                        <div class="offense-date">June 12, 2023</div>
+                        <div class="offense-time">14:30 PM</div>
+                    </div>
+                    <div class="offense-location">Riverside Park, Greenville</div>
+                    <h3 class="offense-title">Construction Waste Dumping</h3>
+                    <p class="offense-desc">Approx. 2 tons of construction debris dumped in protected area.</p>
+                    <span class="status-badge status-reported">Reported</span>
+                </div>
+            </div>
+
+            <!-- Offense 2 -->
+            <div class="offense-card">
+                <img src=""
+                     alt="Illegal dump site" class="offense-img">
+                <div class="offense-details">
+                    <div class="offense-meta">
+                        <div class="offense-date">June 10, 2023</div>
+                        <div class="offense-time">09:15 AM</div>
+                    </div>
+                    <div class="offense-location">Industrial Area, Northside</div>
+                    <h3 class="offense-title">Electronic Waste Disposal</h3>
+                    <p class="offense-desc">Large quantity of electronic waste found near river.</p>
+                    <span class="status-badge status-cleaned">Cleaned</span>
+                </div>
+            </div>
+
+            <!-- Offense 3 -->
+            <div class="offense-card">
+                <img src=""
+                     alt="Illegal dump site" class="offense-img">
+                <div class="offense-details">
+                    <div class="offense-meta">
+                        <div class="offense-date">June 8, 2023</div>
+                        <div class="offense-time">18:45 PM</div>
+                    </div>
+                    <div class="offense-location">Forest Reserve, Oakwood</div>
+                    <h3 class="offense-title">Household Waste Dumping</h3>
+                    <p class="offense-desc">Household garbage dumped in forest area.</p>
+                    <span class="status-badge status-pending">Action Pending</span>
+                </div>
+            </div>
+
+            <!-- Offense 4 -->
+            <div class="offense-card">
+                <img src=""
+                     alt="Illegal dump site" class="offense-img">
+                <div class="offense-details">
+                    <div class="offense-meta">
+                        <div class="offense-date">June 5, 2023</div>
+                        <div class="offense-time">11:20 AM</div>
+                    </div>
+                    <div class="offense-location">Coastal Area, Seaside</div>
+                    <h3 class="offense-title">Plastic Waste on Beach</h3>
+                    <p class="offense-desc">Plastic bottles found on beach shoreline.</p>
+                    <span class="status-badge status-reported">Reported</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="container">
+            <div class="footer-content">
+
+                <div class="footer-about">
+                    <div class="footer-logo">Dump<span>Surveillance AI</span></div>
+                    <p>AI-powered illegal dump detection system.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="home">Home</a></li>
+                        <li><a href="register">Register</a></li>
+                        <li><a href="user_login">User Login</a></li>
+                        <li><a href="authority_login">Authority Login</a></li>
+                        <li><a href="#recent-offenses">Recent Offenses</a></li>
+                        <li><a href="report_dump">Report Illegal Dump</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> info@dumpsurveillance.ai</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Eco Street, Green City</p>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2025 Dump Surveillance AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        const loginDropdown = document.getElementById('loginDropdown');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        const dropdownBtn = loginDropdown.querySelector('.dropdown-btn');
+        dropdownBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                loginDropdown.classList.toggle('active');
+            }
+        });
+    </script>
+</body>
+</html>
