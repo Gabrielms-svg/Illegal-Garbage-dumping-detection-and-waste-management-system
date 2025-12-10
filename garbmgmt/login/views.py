@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth import authenticate , login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -22,56 +22,80 @@ def user_register(request):
         if password1 != password2:
             return redirect('user_register')
 
-        result = User.objects.create(profile=profile, phone=phone, fullname=fullname, 	email=email, password=make_password(password2))
+        result = Normal_user.objects.create(profile=profile, phone=phone, fullname=fullname, 	email=email, password=make_password(password2))
         result.save()
 
      return render(request,'user_register.html' )
 
+
+
+
 def user_login(request):
     if request.method == "POST":
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get("email")
+        password = request.POST.get("password")
 
-        user = authenticate(email=email, password=password)  # or email=... if custom model
+        try:
+            user = Normal_user.objects.get(email=email)
 
-        if user is not None:
-            login(request, user)
-            return redirect('user_dashboard')   # URL name, not file name
+            # check hashed password
+            if check_password(password, user.password):
+                request.session["normal_user_id"] = user.id
+                return redirect("user_dashboard")
+            else:
+                messages.error(request, "Invalid password")
+                return redirect("user_login")
 
-        else:
-            messages.error(request, "Invalid email or password")
-    
-    return render(request, 'user_login.html')
+        except Normal_user.DoesNotExist:
+            messages.error(request, "User not found")
+            return redirect("user_login")
+
+    return render(request, "user_login.html")
+
 
 def auth_login(request):
     if request.method == "POST":
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        auth_id = request.POST.get("auth_id")
+        password = request.POST.get("password")
 
-        user = authenticate(email=email, password=password)
+        try:
+            user = Authority_user.objects.get(auth_id=auth_id)
 
-        if user is not None and user.role == "authority":
-            login(request, user)
-            return redirect('auth_dashboard')   # change URL name as needed
+            if user.password == password:  # direct comparison
+                request.session['authority_user_id'] = user.id
+                messages.success(request, "Authority Login Successful!")
+                return redirect("auth_dashboard")
+            else:
+                messages.error(request, "Invalid password!")
+                return redirect("auth_login")
 
-        else:
-            messages.error(request, "Invalid authority credentials")
+        except Authority_user.DoesNotExist:
+            messages.error(request, "Invalid Authority ID!")
+            return redirect("auth_login")
 
-    return render(request, 'auth_login.html')
+    return render(request, "auth_login.html")
 
 
-@login_required(login_url='user_login')
 def user_dashboard(request):
-    return render(request,'user_dashboard.html')
+    if 'normal_user_id' not in request.session:
+        return redirect('user_login')
+    return render(request, 'user_dashboard.html')
 
 
 def user_logout(request):
-    logout(request)
-    return redirect('user_login')   # redirect to login page
+    if 'normal_user_id' in request.session:
+        del request.session['normal_user_id']
+    return redirect('user_login')
+  # redirect to login page
 
-
+def auth_logout(request):
+    request.session.flush()
+    messages.success(request, "Logged out successfully.")
+    return redirect('home')
 
 
 def auth_dashboard(request):
+    if 'authority_user_id' not in request.session:
+        return redirect('auth_login')
     return render(request,'auth_dashboard.html')
-
+   

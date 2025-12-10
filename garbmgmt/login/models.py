@@ -27,28 +27,54 @@ class CustomUserManager(BaseUserManager):
 
 # Custom user model
 class User(AbstractUser):
-    ROLE_CHOICES = (
-        ('user', 'Normal User'),
-        ('authority', 'Authority'),
-    )
-
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, null=True, blank=True)
-    fullname = models.CharField(max_length=100, null=True, blank=True)
-    profile = models.ImageField(upload_to="profile/", null=True, blank=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='user')
+    email = models.EmailField(unique=True)  
 
     username = None
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
     class Meta:
-        db_table = "user"
+        db_table = 'user'
 
-    def __str__(self):
+    def _str_(self):
         return self.fullname
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+class Normal_user(models.Model):
+    fullname = models.CharField(max_length=50)
+    username = models.CharField(max_length=50)
+    email = models.EmailField(max_length=100, unique=True)
+    phone = models.CharField(max_length=15, unique=True)
+    profile = models.ImageField(upload_to='profiles', null=True, blank=True)
+    password = models.CharField(max_length=255)
+
+
+    def _str_(self):
+        return f"{self.first_name} {self.last_name}"
+    
+    class Meta:
+        db_table = 'normal_user'  # Change table name here
+
+
+
+class Authority_user(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    auth_id = models.CharField(max_length=25, unique=True)
+    email = models.EmailField(max_length=100, unique=True)
+    phone = models.CharField(max_length=15, unique=True)
+    profile_image = models.ImageField(upload_to='auth_profiles/', null=True, blank=True)
+    password = models.CharField(max_length=256) 
+  
+
+    def _str_(self):
+        return f"{self.first_name} {self.last_name}"
+    
+    class Meta:
+        db_table = 'authority_user'  # Change table name here
+
 
 
 
