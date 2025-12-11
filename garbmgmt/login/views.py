@@ -4,7 +4,11 @@ from django.contrib.auth import authenticate , login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import re
+from django.views.decorators.csrf import csrf_exempt
 from .models import *
+from django.http import JsonResponse
+from .chatbot import get_response
+
 
 
 def home(request):
@@ -81,6 +85,20 @@ def user_dashboard(request):
         return redirect('user_login')
     return render(request, 'user_dashboard.html')
 
+
+@csrf_exempt
+def chatbot_api(request):
+    print("VIEW HIT ✔")                     # Debug
+    print("POST:", request.POST)            # Debug
+
+    if request.method == "POST":
+        user_message = request.POST.get("message", "")
+        print("USER MESSAGE:", user_message)  # Debug
+
+        reply = get_response(user_message)
+        return JsonResponse({"reply": reply})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 def user_logout(request):
     if 'normal_user_id' in request.session:

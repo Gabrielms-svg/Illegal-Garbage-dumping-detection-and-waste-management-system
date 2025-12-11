@@ -399,7 +399,7 @@
 </head>
 <body>
     <!-- Django Template Tag for CSRF Token -->
-    <!-- {% csrf_token %} -->
+      
     
     <!-- Navigation Bar -->
     <nav class="navbar">
@@ -489,35 +489,37 @@
             </div>
             
             <!-- Waste Management Chatbot Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-robot card-icon"></i> Waste Management Assistant</h3>
-                </div>
-                
-                <div class="chatbot-container">
-                    <div class="chat-messages">
-                        <div class="message bot-message">
-                            Hello! I'm your Waste Management Assistant. How can I help you today?
-                        </div>
-                        <div class="message user-message">
-                            What items can be recycled?
-                        </div>
-                        <div class="message bot-message">
-                            Common recyclables include paper, cardboard, glass, aluminum, and most plastics labeled #1-7. Always check local guidelines.
-                        </div>
-                    </div>
-                    
-                    <div class="chat-input">
-                        <input type="text" placeholder="Ask about waste management...">
-                        <button><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text);">
-                    <p><i class="fas fa-lightbulb"></i> <strong>Try asking:</strong> "Where can I dispose of electronic waste?" or "What is the penalty for illegal dumping?"</p>
-                </div>
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-robot card-icon"></i> Waste Management Assistant</h3>
+    </div>
+    
+    <div class="chatbot-container">
+
+        <!-- CHAT MESSAGES -->
+        <div class="chat-messages">
+            <div class="message bot-message">
+                Hello! I'm your Waste Management Assistant. How can I help you today?
             </div>
         </div>
+
+        <!-- CHAT INPUT -->
+        <div class="chat-input">
+           
+            <input type="text" placeholder="Ask about waste management...">
+            <button><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+    </div>
+    
+    <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text);">
+        <p><i class="fas fa-lightbulb"></i> 
+            <strong>Try asking:</strong> 
+            "Where can I dispose of electronic waste?" or "What is the penalty for illegal dumping?"
+        </p>
+    </div>
+</div>
+
         
         <!-- Recent Illegal Dumps Detected -->
         <div class="card">
@@ -575,7 +577,23 @@
 
     <script>
         // Simple JavaScript for interactive elements
-        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                 const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                         cookie = cookie.trim();
+                             if (cookie.startsWith(name + '=')) {
+                                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                     break;
+                                 }
+                                 }
+                             }
+                             return cookieValue;
+                    }
+
+const csrftoken = getCookie('csrftoken');
+
         // File upload area interaction
         const uploadArea = document.querySelector('.upload-area');
         const fileInput = document.getElementById('file-upload');
@@ -603,52 +621,53 @@
             }
         });
         
-        // Chatbot simulation
-        const chatInput = document.querySelector('.chat-input input');
-        const chatButton = document.querySelector('.chat-input button');
-        const chatMessages = document.querySelector('.chat-messages');
-        
-        const botResponses = [
-            "Illegal dumping fines can range from $200 to $10,000 depending on severity and location.",
-            "You can report illegal dumping anonymously through our system or by calling local authorities.",
-            "Hazardous waste includes batteries, paint, chemicals, and electronics. These require special disposal.",
-            "Our AI system uses cameras and image recognition to detect illegal dumping activities in monitored areas.",
-            "You can find recycling centers using the 'Legal Dumping Locations' map on this dashboard."
-        ];
-        
+
+   
+
+        // Chatbot Elements
+const chatInput = document.querySelector('.chat-input input');
+const chatButton = document.querySelector('.chat-input button');
+const chatMessages = document.querySelector('.chat-messages');
+
+// Event listeners
         chatButton.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sendMessage();
         });
-        
+
         function sendMessage() {
-            const messageText = chatInput.value.trim();
-            if (messageText === "") return;
-            
-            // Add user message
-            const userMessage = document.createElement('div');
-            userMessage.className = 'message user-message';
-            userMessage.textContent = messageText;
-            chatMessages.appendChild(userMessage);
-            
-            // Clear input
-            chatInput.value = '';
-            
-            // Simulate bot response after delay
-            setTimeout(() => {
-                const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-                const botMessage = document.createElement('div');
-                botMessage.className = 'message bot-message';
-                botMessage.textContent = randomResponse;
-                chatMessages.appendChild(botMessage);
-                
-                // Scroll to bottom
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 1000);
-            
-            // Scroll to bottom for user message
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
+             const messageText = chatInput.value.trim();
+             if (messageText === "") return;
+
+    // Add user message
+             chatMessages.innerHTML += `
+                 <div class="message user-message">${messageText}</div>
+                        `;
+                                chatInput.value = "";
+
+                 const formData = new FormData();
+                formData.append("message", messageText);
+
+                 fetch("/chatbot/", {
+                     method: "POST",
+                     headers: {
+                     "X-CSRFToken": csrftoken
+                    },
+                     body: formData
+                    })
+                .then(res => res.json())
+                .then(data => {
+                 chatMessages.innerHTML += `
+                    <div class="message bot-message">${data.reply}</div>
+                     `;
+                         chatMessages.scrollTop = chatMessages.scrollHeight;
+                    })
+                  .catch(err => console.error("Chatbot Error:", err));
+                }
+
+
+
+
         
         // Form submission simulation
         const reportForm = document.querySelector('.report-form');

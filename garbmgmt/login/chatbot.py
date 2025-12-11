@@ -11,15 +11,15 @@ df = pd.read_csv(file_path)
 
 def preprocess_text(text):
     text = text.lower()
-    text = re.sub(r'[^a-zA-Z0-9 ]', '', text)                                                                                                                            
+    text = re.sub(r'[^a-zA-Z0-9 ]', '', text)
     return text
 
 
 df['Question'] = df['Question'].apply(preprocess_text)
 
-
 vectorizer = TfidfVectorizer()
 tfidf_matrix = vectorizer.fit_transform(df['Question'])
+
 
 def get_response(user_input, threshold=0.2):
     user_input = preprocess_text(user_input)
@@ -33,13 +33,3 @@ def get_response(user_input, threshold=0.2):
         return "I'm sorry, I didn't understand. Can you rephrase your question?"
 
     return df.iloc[best_match_idx]['Answer']
-
-
-print("Knowlegde bot: Hi! Ask me  questions about waste management. (type 'exit' to quit)")
-while True:
-    user_query = input("You: ")
-    if user_query.lower() in ['exit', 'quit']:
-        print("Knowledgebot: Goodbye!")
-        break
-    response = get_response(user_query)
-    print("Knowledgebot:", response)
