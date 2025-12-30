@@ -1,0 +1,6 @@
+event_id,time,plate_text,confidence,image
+1,20251230_111515,KARNATAKA,1.0,plate_evidence/event_1_KARNATAKA.jpg
+2,20251230_111515,KARNATAF,0.95,plate_evidence/event_2_KARNATAF.jpg
+3,20251230_111515,KARNAT,0.94,plate_evidence/event_3_KARNAT.jpg
+4,20251230_111519,REL1A8LE,0.99,plate_evidence/event_4_REL1A8LE.jpg
+5,20251230_111520,REL1A8,1.0,plate_evidence/event_5_REL1A8.jpg

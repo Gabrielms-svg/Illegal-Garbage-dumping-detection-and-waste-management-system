@@ -1,0 +1,41 @@
+IF
+  person OR vehicle detected
+  AND waste appears within 10–20 seconds
+  AND person/vehicle leaves the scene
+  AND waste remains for ≥ 5 seconds
+THEN
+  Illegal dumping detected
+
+
+
+
+t = 0s   → person arrives
+t = 5s   → person + waste detected
+t = 12s  → person leaves
+t = 20s  → waste still present
+→ ILLEGAL DUMPING
+
+
+
+person_present = False
+waste_present = False
+person_last_seen = 0
+waste_first_seen = 0
+dumping_flag = False
+
+
+pseudocode
+
+current_time = time.time()
+
+if person_detected or vehicle_detected:
+    person_present = True
+    person_last_seen = current_time
+
+if waste_detected and waste_first_seen == 0:
+    waste_first_seen = current_time
+
+# Person left but waste remains
+if person_present and not person_detected:
+    if current_time - waste_first_seen >= 5:
+        dumping_flag = True

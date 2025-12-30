@@ -1,0 +1,5 @@
+event_id,timestamp,video,waste_type,vehicle,confidence,image_path
+1,2025-12-30 11:10:56,10.mp4,Aluminum can,,0.26,evidence\event_1\dumping_frame.jpg
+2,2025-12-30 11:11:11,10.mp4,Plastic bag,,0.42,evidence\event_2\dumping_frame.jpg
+3,2025-12-30 11:11:18,10.mp4,Plastic bag,,0.64,evidence\event_3\dumping_frame.jpg
+4,2025-12-30 11:11:27,10.mp4,Plastic bag,,0.54,evidence\event_4\dumping_frame.jpg
