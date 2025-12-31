@@ -120,55 +120,50 @@ def auth_dashboard(request):
     return render(request,'auth_dashboard.html')
 
 
-@csrf_exempt
-def add_legal_location(request):
 
-    if request.method != "POST":
-        return JsonResponse(
-            {"error": "Only POST method allowed"},
-            status=405
-        )
+@csrf_exempt  # (later you can do CSRF properly)
+def save_location(request):
 
+    authority_id = request.session.get("authority_user_id")
+    if not authority_id:
+        return JsonResponse({"error": "Not logged in"}, status=401)
 
+    authority = Authority_user.objects.get(id=authority_id)
 
-    if not request.user.is_staff:
-        return JsonResponse(
-            {"error": "Permission denied"},
-            status=403
-        )
-
-    try:
+    if request.method == "POST":
         data = json.loads(request.body)
 
-        LegalDumpingLocation.objects.create(
-            name="Legal Dumping Site",
-            latitude=data.get("latitude"),
-            longitude=data.get("longitude"),
-            added_by=request.user
+        location = LegalDumpingLocation.objects.create(
+            name=data.get("name"),
+            location_type=data.get("type"),
+            latitude=data.get("lat"),
+            longitude=data.get("lng"),
+            added_by=authority
         )
 
-        return JsonResponse(
-            {"message": "Location saved successfully"},
-            status=201
-        )
+        return JsonResponse({"status": "success"})
 
-    except json.JSONDecodeError:
-        return JsonResponse(
-            {"error": "Invalid JSON data"},
-            status=400
-        )
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
-    except Exception as e:
-        return JsonResponse(
-            {"error": str(e)},
-            status=500
-        )
 
-def get_legal_locations(request):
-    locations = LegalDumpingLocation.objects.filter(is_active=True)
-    return JsonResponse(list(locations.values()), safe=False)
 
-@csrf_exempt
+
+def get_locations(request):
+    locations = LegalDumpingLocation.objects.all()
+
+    data = []
+    for loc in locations:
+        data.append({
+            "id": loc.id,
+            "name": loc.name,
+            "type": loc.location_type,
+            "lat": loc.latitude,
+            "lng": loc.longitude
+        })
+
+    return JsonResponse(data, safe=False)
+
+
 @require_http_methods(["DELETE"])
 def delete_legal_location(request, location_id):
     if request.user.is_staff:

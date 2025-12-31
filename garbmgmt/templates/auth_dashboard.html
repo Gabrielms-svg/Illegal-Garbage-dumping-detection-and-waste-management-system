@@ -1100,6 +1100,131 @@
     </footer>
 
     <script>
+      let map = L.map("map").setView([10.8505, 76.2711], 7); // Kerala default
+      let selectedMarker = null;
+      let selectedLatLng = null;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
+
+      map.on("click", function (e) {
+        selectedLatLng = e.latlng;
+
+        if (selectedMarker) {
+          map.removeLayer(selectedMarker);
+        }
+
+        selectedMarker = L.marker(e.latlng).addTo(map);
+
+        document.getElementById(
+          "selectedCoords"
+        ).innerText = `Lat: ${e.latlng.lat.toFixed(
+          6
+        )}, Lng: ${e.latlng.lng.toFixed(6)}`;
+
+        document.getElementById("saveLocationBtn").disabled = false;
+      });
+    </script>
+
+    <script>
+      document
+        .getElementById("saveLocationBtn")
+        .addEventListener("click", () => {
+          document.getElementById("locationForm").style.display = "block";
+        });
+    </script>
+
+    <script>
+      let markers = []; // store markers to manage later
+
+      function loadLocations() {
+        fetch("/get-locations/")
+          .then((response) => response.json())
+          .then((locations) => {
+            // Clear existing markers
+            markers.forEach((m) => map.removeLayer(m));
+            markers = [];
+
+            locations.forEach((loc) => {
+              const marker = L.marker([loc.lat, loc.lng]).addTo(map);
+
+              marker.bindPopup(`
+                    <b>${loc.name}</b><br>
+                    Type: ${loc.type}<br>
+                    Lat: ${loc.lat.toFixed(5)}<br>
+                    Lng: ${loc.lng.toFixed(5)}
+                `);
+
+              markers.push(marker);
+            });
+
+            document.getElementById(
+              "locationCount"
+            ).innerText = `${locations.length} legal dumping locations loaded`;
+          })
+          .catch((err) => console.error("Error loading locations:", err));
+      }
+
+      // Load markers when page opens
+      loadLocations();
+    </script>
+
+    <script>
+      document
+        .getElementById("confirmSaveBtn")
+        .addEventListener("click", () => {
+          const name = document.getElementById("locationName").value;
+          const type = document.getElementById("locationType").value;
+
+          if (!name || !selectedLatLng) {
+            alert("Please select location and enter name");
+            return;
+          }
+
+          fetch("/save-location/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+              name: name,
+              type: type,
+              lat: selectedLatLng.lat,
+              lng: selectedLatLng.lng,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              alert("Location saved successfully!");
+              document.getElementById("locationForm").style.display = "none";
+              document.getElementById("locationName").value = "";
+            })
+            .catch((err) => console.error(err));
+        });
+    </script>
+
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1)
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    </script>
+
+    <script>
       // JavaScript for interactive elements
 
       // Sort offences table

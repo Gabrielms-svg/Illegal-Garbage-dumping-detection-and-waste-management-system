@@ -80,9 +80,18 @@ class Authority_user(models.Model):
 # models.py
 class LegalDumpingLocation(models.Model):
     name = models.CharField(max_length=200)
+    location_type = models.CharField(
+        max_length=50, null=True, blank=True,
+        choices=[
+            ('bin', 'Garbage Bin'),
+            ('recycling', 'Recycling Center'),
+            ('transfer', 'Transfer Station'),
+            ('hazardous', 'Hazardous Waste'),
+        ]
+    )
     latitude = models.FloatField()
     longitude = models.FloatField()
     is_active = models.BooleanField(default=True)
-    added_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(Authority_user, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
