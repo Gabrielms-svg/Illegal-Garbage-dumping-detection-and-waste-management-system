@@ -120,17 +120,49 @@ def auth_dashboard(request):
     return render(request,'auth_dashboard.html')
 
 
-@csrf_exempt   
+@csrf_exempt
 def add_legal_location(request):
-    if request.method == "POST" and request.user.is_staff:
+
+    if request.method != "POST":
+        return JsonResponse(
+            {"error": "Only POST method allowed"},
+            status=405
+        )
+
+
+
+    if not request.user.is_staff:
+        return JsonResponse(
+            {"error": "Permission denied"},
+            status=403
+        )
+
+    try:
         data = json.loads(request.body)
+
         LegalDumpingLocation.objects.create(
             name="Legal Dumping Site",
-            latitude=data["latitude"],
-            longitude=data["longitude"],
+            latitude=data.get("latitude"),
+            longitude=data.get("longitude"),
             added_by=request.user
         )
-        return JsonResponse({"message": "Location saved successfully"})
+
+        return JsonResponse(
+            {"message": "Location saved successfully"},
+            status=201
+        )
+
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"error": "Invalid JSON data"},
+            status=400
+        )
+
+    except Exception as e:
+        return JsonResponse(
+            {"error": str(e)},
+            status=500
+        )
 
 def get_legal_locations(request):
     locations = LegalDumpingLocation.objects.filter(is_active=True)
