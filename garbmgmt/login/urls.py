@@ -16,6 +16,7 @@ urlpatterns = [
     path("save-location/", views.save_location, name="save_location"),
     path("get-locations/", views.get_locations, name="get_locations"),
     path("delete-location/", views.delete_location, name="delete_location"),
+    path('camera/live/05/', views.live_camera_feed, name='camera05'),
 
 
     

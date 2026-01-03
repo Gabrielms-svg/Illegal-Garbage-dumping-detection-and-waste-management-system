@@ -11,6 +11,8 @@ from .chatbot import get_response
 import json
 from .models import LegalDumpingLocation
 from django.views.decorators.http import require_http_methods
+import cv2
+from django.http import StreamingHttpResponse
 
 
 def home(request):
@@ -149,7 +151,7 @@ def save_location(request):
 
 
 def get_locations(request):
-    locations = LegalDumpingLocation.objects.all()
+    locations = LegalDumpingLocation.objects.filter(is_active=True)
 
     data = []
     for loc in locations:
@@ -164,23 +166,59 @@ def get_locations(request):
     return JsonResponse(data, safe=False)
 
 
-@csrf_exempt
+
+
+
+
 def delete_location(request):
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid"}, status=400)
+
+    authority_id = request.session.get("authority_user_id")
+    if not authority_id:
+        return JsonResponse({"status": "unauthorized"}, status=403)
+
+    try:
         data = json.loads(request.body)
         location_id = data.get("id")
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "invalid_json"}, status=400)
 
-        authority_id = request.session.get("authority_user_id")
-        if not authority_id:
-            return JsonResponse({"status": "unauthorized"}, status=403)
+    location = get_object_or_404(
+        LegalDumpingLocation,
+        id=location_id,
+        added_by_id=authority_id,
+        is_active=True
+    )
 
-        location = get_object_or_404(
-            LegalDumpingLocation,
-            id=location_id,
-            added_by_id=authority_id  # 🔐 authority ownership check
-        )
+    # ✅ SOFT DELETE
+    location.is_active = False
+    location.save()
 
-        location.delete()  # 🔥 HARD DELETE
-        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "success"})
 
-    return JsonResponse({"status": "invalid"}, status=400)
+
+
+
+
+RTSP_URL = "rtsp://localhost:8554/cam1"
+
+def gen_frames():
+    cap = cv2.VideoCapture(RTSP_URL)
+
+    while True:
+        success, frame = cap.read()
+        if not success:
+            break
+
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def live_camera_feed(request):
+    return StreamingHttpResponse(
+        gen_frames(),
+        content_type='multipart/x-mixed-replace; boundary=frame'
+    )

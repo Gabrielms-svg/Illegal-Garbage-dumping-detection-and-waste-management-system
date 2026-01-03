@@ -352,18 +352,22 @@
       }
 
       .camera-card {
-        border-radius: 4px;
-        overflow: hidden;
-        position: relative;
-        height: 200px;
-        background-color: #000;
-      }
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;   /* creates stacking context */
+  height: 200px;
+  background-color: #000;
+  z-index: 1;           /* prevents overlay overlap */
+}
 
-      .camera-feed {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+.camera-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* fills card correctly */
+  display: block;       /* removes inline-gap issues */
+  background-color: #000;
+}
+
 
       .camera-info {
         position: absolute;
@@ -808,23 +812,12 @@
 
           <div class="cameras-grid">
             <div class="camera-card">
-              <div
-                class="camera-feed"
-                style="
-                  background-color: #555;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  color: white;
-                "
-              >
-                <div style="text-align: center">
-                  <i
-                    class="fas fa-video"
-                    style="font-size: 2rem; margin-bottom: 0.5rem"
-                  ></i>
-                  <p>Live Feed</p>
-                </div>
+              <img
+    src="/camera/live/05/"
+    class="camera-feed"
+    alt="Live CCTV Feed"
+  />
+                
               </div>
               <div class="camera-info">
                 <div>
@@ -1093,11 +1086,14 @@
     <!-- Footer -->
     <footer class="footer">
       <p>
-        Dump Surveillance AI - Authority Portal &copy; 2023. Restricted access
+        Dump Surveillance AI - Authority Portal &copy; 2025. Restricted access
         for authorized personnel only.
       </p>
       <p>All activities are logged for security and compliance purposes.</p>
     </footer>
+
+
+
 
     <script>
       let map = L.map("map").setView([10.8505, 76.2711], 7); // Kerala default
@@ -1125,10 +1121,14 @@
         ).innerText = `Lat: ${e.latlng.lat.toFixed(
           6
         )}, Lng: ${e.latlng.lng.toFixed(6)}`;
-
+        
         document.getElementById("saveLocationBtn").disabled = false;
       });
     </script>
+    
+
+
+
 
     <script>
       document
@@ -1137,21 +1137,10 @@
           document.getElementById("locationForm").style.display = "block";
         });
     </script>
-    <script>
-      document
-        .getElementById("deleteLocationBtn")
-        .addEventListener("click", () => {
-          if (!selectedMarker || !selectedMarker.locationId) {
-            alert("Please select a location marker first");
-            return;
-          }
 
-          deleteLocation(selectedMarker.locationId);
-        });
-    </script>
-    <script>
-       // store markers to manage later
 
+
+    <script>
       function loadLocations() {
         fetch("/get-locations/")
           .then((response) => response.json())
@@ -1162,7 +1151,12 @@
 
             locations.forEach((loc) => {
               const marker = L.marker([loc.lat, loc.lng]).addTo(map);
+              marker.locationId = loc.id;
 
+              marker.on("click", () => {
+               selectedMarker = marker;
+                document.getElementById("deleteLocationBtn").disabled = false;
+               });
               marker.bindPopup(`
                     <b>${loc.name}</b><br>
                     Type: ${loc.type}<br>
@@ -1183,6 +1177,49 @@
       // Load markers when page opens
       loadLocations();
     </script>
+
+<script>
+document
+  .getElementById("deleteLocationBtn")
+  .addEventListener("click", () => {
+
+    console.log("❌ Delete button clicked");
+
+    if (!selectedMarker || !selectedMarker.locationId) {
+      alert("Please select a location marker to delete");
+      return;
+    }
+
+    console.log("📍 Location ID:", selectedMarker.locationId);
+
+    if (!confirm("Are you sure you want to delete this location?")) {
+      return;
+    }
+
+    fetch("/delete-location/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify({
+        id: selectedMarker.locationId,
+      }),
+    })
+      .then((res) => {
+        console.log("📡 Response received", res);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("✅ Server response:", data);
+      })
+      .catch((err) => console.error("🔥 Fetch error:", err));
+  });
+</script>
+
+
+
+
 
     <script>
       document
@@ -1237,47 +1274,8 @@
         return cookieValue;
       }
     </script>
-    <script>
-      document
-        .getElementById("deleteLocationBtn")
-        .addEventListener("click", () => {
-          if (!selectedMarker || !selectedMarker.locationId) {
-            alert("Please select a location marker to delete");
-            return;
-          }
-
-          if (!confirm("Are you sure you want to delete this location?")) {
-            return;
-          }
-
-          fetch("/delete-location/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCookie("csrftoken"),
-            },
-            body: JSON.stringify({
-              id: selectedMarker.locationId,
-            }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.status === "success") {
-                alert("Location deleted successfully!");
-
-                // remove marker from map
-                map.removeLayer(selectedMarker);
-                selectedMarker = null;
-
-                // disable delete button again
-                document.getElementById("deleteLocationBtn").disabled = true;
-              } else {
-                alert("Failed to delete location");
-              }
-            })
-            .catch((err) => console.error(err));
-        });
-    </script>
+    
+    
 
     <script>
       // JavaScript for interactive elements
@@ -1397,7 +1395,7 @@
                 "normal";
               clearSelection();
             }
-          });
+          });}
 
         // Save location button
         document
@@ -1419,12 +1417,9 @@
         document
           .getElementById("deleteLocationBtn")
           .addEventListener("click", function () {
-            if (selectedMarker && selectedMarker.locationId) {
-              if (confirm("Are you sure you want to delete this location?")) {
-                deleteLocation(selectedMarker.locationId);
-              }
-            }
+            clearSelection();
           });
+
 
         // Confirm save from form
         document
@@ -1465,6 +1460,7 @@
         // Enable save button
         document.getElementById("saveLocationBtn").disabled = false;
         document.getElementById("cancelLocationBtn").disabled = false;
+        
 
         // Make marker draggable
         tempMarker.on("dragend", function (event) {
