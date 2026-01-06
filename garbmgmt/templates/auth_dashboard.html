@@ -352,22 +352,21 @@
       }
 
       .camera-card {
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;   /* creates stacking context */
-  height: 200px;
-  background-color: #000;
-  z-index: 1;           /* prevents overlay overlap */
-}
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative; /* creates stacking context */
+        height: 200px;
+        background-color: #000;
+        z-index: 1; /* prevents overlay overlap */
+      }
 
-.camera-feed {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;    /* fills card correctly */
-  display: block;       /* removes inline-gap issues */
-  background-color: #000;
-}
-
+      .camera-feed {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* fills card correctly */
+        display: block; /* removes inline-gap issues */
+        background-color: #000;
+      }
 
       .camera-info {
         position: absolute;
@@ -615,7 +614,8 @@
         <div class="card">
           <div class="card-header">
             <h3>
-              <i class="fas fa-clipboard-list card-icon"></i> Offences Reports
+              <i class="fas fa-clipboard-list card-icon"></i> CCTV detected
+              reports
             </h3>
             <span class="status-badge status-pending">12 New Today</span>
           </div>
@@ -795,6 +795,69 @@
             </button>
           </div>
         </div>
+        <!-- User Reported Dumping Events -->
+        <div class="card">
+          <div class="card-header">
+            <h3>
+              <i class="fas fa-user card-icon"></i> User Reported Dumping Events
+            </h3>
+            <span class="status-badge status-pending">Citizen Reports</span>
+          </div>
+
+          <p>
+            Dumping incidents reported directly by citizens using mobile phones.
+          </p>
+
+          <div class="offences-container">
+            <table class="offences-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Reported At</th>
+                  <th>Location</th>
+                  <th>Media</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- {% for report in user_reports %} -->
+                <tr>
+                  <td>#USR-2025-041</td>
+                  <td>2025-01-06 14:22</td>
+                  <td>MG Road, Kochi</td>
+                  <td><i class="fas fa-image"></i> Photo</td>
+                  <td>
+                    <span class="status-badge status-pending">Pending</span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button
+                        class="btn btn-small"
+                        onclick="viewUserReport('USR-2025-041')"
+                      >
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                      <button
+                        class="btn btn-secondary btn-small"
+                        onclick="downloadUserEvidence('USR-2025-041')"
+                      >
+                        <i class="fas fa-download"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- {% endfor %} -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="download-options">
+            <button class="btn btn-secondary">
+              <i class="fas fa-download"></i> Download All User Reports
+            </button>
+          </div>
+        </div>
 
         <!-- Live Cameras Card -->
         <div class="card">
@@ -813,272 +876,256 @@
           <div class="cameras-grid">
             <div class="camera-card">
               <img
-    src="/camera/live/05/"
-    class="camera-feed"
-    alt="Live CCTV Feed"
-  />
-                
-              </div>
-              <div class="camera-info">
-                <div>
-                  <strong>Camera #05</strong><br />
-                  <small>Downtown - 5th Ave</small>
-                </div>
-                <div class="status-indicator status-active"></div>
-              </div>
-            </div>
-
-            <div class="camera-card">
-              <div
+                src="/camera/live/05/"
                 class="camera-feed"
-                style="
-                  background-color: #555;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  color: white;
-                "
-              >
-                <div style="text-align: center">
-                  <i
-                    class="fas fa-video"
-                    style="font-size: 2rem; margin-bottom: 0.5rem"
-                  ></i>
-                  <p>Live Feed</p>
-                </div>
+                alt="Live CCTV Feed"
+              />
+            </div>
+            <div class="camera-info">
+              <div>
+                <strong>Camera #05</strong><br />
+                <small>Downtown - 5th Ave</small>
               </div>
-              <div class="camera-info">
-                <div>
-                  <strong>Camera #12</strong><br />
-                  <small>Industrial Zone</small>
-                </div>
-                <div class="status-indicator status-active"></div>
-              </div>
+              <div class="status-indicator status-active"></div>
             </div>
           </div>
 
-          <div style="margin-top: 1rem">
-            <button class="btn" style="width: 100%">
-              <i class="fas fa-expand"></i> View All Camera Feeds (12 Active)
+          <div class="camera-card">
+            <div
+              class="camera-feed"
+              style="
+                background-color: #555;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+              "
+            >
+              <div style="text-align: center">
+                <i
+                  class="fas fa-video"
+                  style="font-size: 2rem; margin-bottom: 0.5rem"
+                ></i>
+                <p>Live Feed</p>
+              </div>
+            </div>
+            <div class="camera-info">
+              <div>
+                <strong>Camera #12</strong><br />
+                <small>Industrial Zone</small>
+              </div>
+              <div class="status-indicator status-active"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem">
+          <button class="btn" style="width: 100%">
+            <i class="fas fa-expand"></i> View All Camera Feeds (12 Active)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="dashboard-grid">
+      <!-- Manage Legal Dumping Locations Card -->
+
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            <i class="fas fa-map-marked-alt card-icon"></i> Legal Dumping
+            Locations
+          </h3>
+          <button id="toggleEditMode" class="btn btn-small">
+            <i class="fas fa-plus"></i> Add New Locations
+          </button>
+        </div>
+
+        <p id="mapInstructions">
+          Click on the map to add legal dumping locations. Click on markers to
+          edit or delete.
+        </p>
+
+        <div class="map-container" style="height: 400px">
+          <div
+            id="map"
+            style="width: 100%; height: 100%; border-radius: 4px"
+          ></div>
+        </div>
+
+        <div class="map-controls">
+          <div style="display: flex; gap: 10px; align-items: center">
+            <button id="saveLocationBtn" class="btn" disabled>
+              <i class="fas fa-save"></i> Save Location
+            </button>
+            <button id="cancelLocationBtn" class="btn btn-secondary" disabled>
+              <i class="fas fa-times"></i> Cancel
+            </button>
+            <button id="deleteLocationBtn" class="btn btn-danger" disabled>
+              <i class="fas fa-trash-alt"></i> Delete
             </button>
           </div>
+          <div>
+            <span
+              id="selectedCoords"
+              style="font-size: 0.9rem; color: var(--light-text)"
+            ></span>
+          </div>
+        </div>
+
+        <!-- Location Form (hidden by default) -->
+        <div
+          id="locationForm"
+          style="
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+          "
+        >
+          <h4 style="margin-bottom: 1rem">Location Details</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+            <div>
+              <label
+                for="locationName"
+                style="display: block; margin-bottom: 0.5rem; font-weight: 500"
+                >Location Name</label
+              >
+              <input
+                type="text"
+                id="locationName"
+                placeholder="e.g., Downtown Recycling Center"
+                style="
+                  width: 100%;
+                  padding: 0.6rem;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              />
+            </div>
+            <div>
+              <label
+                for="locationType"
+                style="display: block; margin-bottom: 0.5rem; font-weight: 500"
+                >Type</label
+              >
+              <select
+                id="locationType"
+                style="
+                  width: 100%;
+                  padding: 0.6rem;
+                  border: 1px solid #ddd;
+                  border-radius: 4px;
+                "
+              >
+                <option value="bin">Garbage Bin</option>
+                <option value="recycling">Recycling Center</option>
+                <option value="transfer">Transfer Station</option>
+                <option value="hazardous">Hazardous Waste</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top: 1rem; display: flex; gap: 1rem">
+            <button id="confirmSaveBtn" class="btn">
+              <i class="fas fa-check"></i> Confirm Save
+            </button>
+            <button id="cancelFormBtn" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+
+        <div
+          style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text)"
+        >
+          <p>
+            <i class="fas fa-info-circle"></i>
+            <span id="locationCount">Loading locations...</span>
+          </p>
         </div>
       </div>
 
-      <!-- Second Row -->
-      <div class="dashboard-grid">
-        <!-- Manage Legal Dumping Locations Card -->
-
-        <div class="card">
-          <div class="card-header">
-            <h3>
-              <i class="fas fa-map-marked-alt card-icon"></i> Legal Dumping
-              Locations
-            </h3>
-            <button id="toggleEditMode" class="btn btn-small">
-              <i class="fas fa-plus"></i> Add New Locations
-            </button>
-          </div>
-
-          <p id="mapInstructions">
-            Click on the map to add legal dumping locations. Click on markers to
-            edit or delete.
-          </p>
-
-          <div class="map-container" style="height: 400px">
-            <div
-              id="map"
-              style="width: 100%; height: 100%; border-radius: 4px"
-            ></div>
-          </div>
-
-          <div class="map-controls">
-            <div style="display: flex; gap: 10px; align-items: center">
-              <button id="saveLocationBtn" class="btn" disabled>
-                <i class="fas fa-save"></i> Save Location
-              </button>
-              <button id="cancelLocationBtn" class="btn btn-secondary" disabled>
-                <i class="fas fa-times"></i> Cancel
-              </button>
-              <button id="deleteLocationBtn" class="btn btn-danger" disabled>
-                <i class="fas fa-trash-alt"></i> Delete
-              </button>
-            </div>
-            <div>
-              <span
-                id="selectedCoords"
-                style="font-size: 0.9rem; color: var(--light-text)"
-              ></span>
-            </div>
-          </div>
-
-          <!-- Location Form (hidden by default) -->
-          <div
-            id="locationForm"
+      <!-- Recent Illegal Dumps Detected -->
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            <i class="fas fa-camera card-icon"></i> AI-Detected Illegal Dumps
+          </h3>
+          <a
+            href="#"
             style="
-              display: none;
-              margin-top: 1rem;
-              padding: 1rem;
-              background-color: #f9f9f9;
-              border-radius: 4px;
-            "
-          >
-            <h4 style="margin-bottom: 1rem">Location Details</h4>
-            <div
-              style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem"
-            >
-              <div>
-                <label
-                  for="locationName"
-                  style="
-                    display: block;
-                    margin-bottom: 0.5rem;
-                    font-weight: 500;
-                  "
-                  >Location Name</label
-                >
-                <input
-                  type="text"
-                  id="locationName"
-                  placeholder="e.g., Downtown Recycling Center"
-                  style="
-                    width: 100%;
-                    padding: 0.6rem;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                  "
-                />
-              </div>
-              <div>
-                <label
-                  for="locationType"
-                  style="
-                    display: block;
-                    margin-bottom: 0.5rem;
-                    font-weight: 500;
-                  "
-                  >Type</label
-                >
-                <select
-                  id="locationType"
-                  style="
-                    width: 100%;
-                    padding: 0.6rem;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                  "
-                >
-                  <option value="bin">Garbage Bin</option>
-                  <option value="recycling">Recycling Center</option>
-                  <option value="transfer">Transfer Station</option>
-                  <option value="hazardous">Hazardous Waste</option>
-                </select>
-              </div>
-            </div>
-            <div style="margin-top: 1rem; display: flex; gap: 1rem">
-              <button id="confirmSaveBtn" class="btn">
-                <i class="fas fa-check"></i> Confirm Save
-              </button>
-              <button id="cancelFormBtn" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Cancel
-              </button>
-            </div>
-          </div>
-
-          <div
-            style="
-              margin-top: 1rem;
+              text-decoration: none;
+              color: var(--primary-color);
               font-size: 0.9rem;
-              color: var(--light-text);
             "
+            >View All</a
           >
-            <p>
-              <i class="fas fa-info-circle"></i>
-              <span id="locationCount">Loading locations...</span>
-            </p>
-          </div>
         </div>
 
-        <!-- Recent Illegal Dumps Detected -->
-        <div class="card">
-          <div class="card-header">
-            <h3>
-              <i class="fas fa-camera card-icon"></i> AI-Detected Illegal Dumps
-            </h3>
-            <a
-              href="#"
-              style="
-                text-decoration: none;
-                color: var(--primary-color);
-                font-size: 0.9rem;
-              "
-              >View All</a
-            >
+        <p>
+          Recent illegal dumping incidents detected by AI surveillance (last 24
+          hours):
+        </p>
+
+        <div class="dumps-grid">
+          <!-- Django Template Tag for loop -->
+          <!-- {% for dump in recent_dumps %} -->
+          <div class="dump-item">
+            <img
+              src="https://images.unsplash.com/photo-1589652717521-10c0d092dea9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+              alt="Illegal dump site"
+            />
+            <div class="dump-info">
+              <strong>Downtown Area</strong><br />
+              Detected: 2 hours ago<br />
+              <small>Confidence: 94%</small>
+            </div>
           </div>
 
-          <p>
-            Recent illegal dumping incidents detected by AI surveillance (last
-            24 hours):
-          </p>
-
-          <div class="dumps-grid">
-            <!-- Django Template Tag for loop -->
-            <!-- {% for dump in recent_dumps %} -->
-            <div class="dump-item">
-              <img
-                src="https://images.unsplash.com/photo-1589652717521-10c0d092dea9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                alt="Illegal dump site"
-              />
-              <div class="dump-info">
-                <strong>Downtown Area</strong><br />
-                Detected: 2 hours ago<br />
-                <small>Confidence: 94%</small>
-              </div>
+          <div class="dump-item">
+            <img
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+              alt="Illegal dump site"
+            />
+            <div class="dump-info">
+              <strong>Industrial Zone</strong><br />
+              Detected: 5 hours ago<br />
+              <small>Confidence: 87%</small>
             </div>
-
-            <div class="dump-item">
-              <img
-                src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                alt="Illegal dump site"
-              />
-              <div class="dump-info">
-                <strong>Industrial Zone</strong><br />
-                Detected: 5 hours ago<br />
-                <small>Confidence: 87%</small>
-              </div>
-            </div>
-
-            <div class="dump-item">
-              <img
-                src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                alt="Illegal dump site"
-              />
-              <div class="dump-info">
-                <strong>Riverside</strong><br />
-                Detected: 8 hours ago<br />
-                <small>Confidence: 92%</small>
-              </div>
-            </div>
-
-            <div class="dump-item">
-              <img
-                src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-                alt="Illegal dump site"
-              />
-              <div class="dump-info">
-                <strong>Forest Road</strong><br />
-                Detected: 12 hours ago<br />
-                <small>Confidence: 76%</small>
-              </div>
-            </div>
-            <!-- {% endfor %} -->
           </div>
 
-          <div style="margin-top: 1rem">
-            <button class="btn" style="width: 100%">
-              <i class="fas fa-chart-bar"></i> View Detection Analytics
-            </button>
+          <div class="dump-item">
+            <img
+              src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+              alt="Illegal dump site"
+            />
+            <div class="dump-info">
+              <strong>Riverside</strong><br />
+              Detected: 8 hours ago<br />
+              <small>Confidence: 92%</small>
+            </div>
           </div>
+
+          <div class="dump-item">
+            <img
+              src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
+              alt="Illegal dump site"
+            />
+            <div class="dump-info">
+              <strong>Forest Road</strong><br />
+              Detected: 12 hours ago<br />
+              <small>Confidence: 76%</small>
+            </div>
+          </div>
+          <!-- {% endfor %} -->
+        </div>
+
+        <div style="margin-top: 1rem">
+          <button class="btn" style="width: 100%">
+            <i class="fas fa-chart-bar"></i> View Detection Analytics
+          </button>
         </div>
       </div>
     </div>
@@ -1091,9 +1138,6 @@
       </p>
       <p>All activities are logged for security and compliance purposes.</p>
     </footer>
-
-
-
 
     <script>
       let map = L.map("map").setView([10.8505, 76.2711], 7); // Kerala default
@@ -1121,14 +1165,10 @@
         ).innerText = `Lat: ${e.latlng.lat.toFixed(
           6
         )}, Lng: ${e.latlng.lng.toFixed(6)}`;
-        
+
         document.getElementById("saveLocationBtn").disabled = false;
       });
     </script>
-    
-
-
-
 
     <script>
       document
@@ -1137,8 +1177,6 @@
           document.getElementById("locationForm").style.display = "block";
         });
     </script>
-
-
 
     <script>
       function loadLocations() {
@@ -1154,9 +1192,9 @@
               marker.locationId = loc.id;
 
               marker.on("click", () => {
-               selectedMarker = marker;
+                selectedMarker = marker;
                 document.getElementById("deleteLocationBtn").disabled = false;
-               });
+              });
               marker.bindPopup(`
                     <b>${loc.name}</b><br>
                     Type: ${loc.type}<br>
@@ -1178,48 +1216,43 @@
       loadLocations();
     </script>
 
-<script>
-document
-  .getElementById("deleteLocationBtn")
-  .addEventListener("click", () => {
+    <script>
+      document
+        .getElementById("deleteLocationBtn")
+        .addEventListener("click", () => {
+          console.log("❌ Delete button clicked");
 
-    console.log("❌ Delete button clicked");
+          if (!selectedMarker || !selectedMarker.locationId) {
+            alert("Please select a location marker to delete");
+            return;
+          }
 
-    if (!selectedMarker || !selectedMarker.locationId) {
-      alert("Please select a location marker to delete");
-      return;
-    }
+          console.log("📍 Location ID:", selectedMarker.locationId);
 
-    console.log("📍 Location ID:", selectedMarker.locationId);
+          if (!confirm("Are you sure you want to delete this location?")) {
+            return;
+          }
 
-    if (!confirm("Are you sure you want to delete this location?")) {
-      return;
-    }
-
-    fetch("/delete-location/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": getCookie("csrftoken"),
-      },
-      body: JSON.stringify({
-        id: selectedMarker.locationId,
-      }),
-    })
-      .then((res) => {
-        console.log("📡 Response received", res);
-        return res.json();
-      })
-      .then((data) => {
-        console.log("✅ Server response:", data);
-      })
-      .catch((err) => console.error("🔥 Fetch error:", err));
-  });
-</script>
-
-
-
-
+          fetch("/delete-location/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({
+              id: selectedMarker.locationId,
+            }),
+          })
+            .then((res) => {
+              console.log("📡 Response received", res);
+              return res.json();
+            })
+            .then((data) => {
+              console.log("✅ Server response:", data);
+            })
+            .catch((err) => console.error("🔥 Fetch error:", err));
+        });
+    </script>
 
     <script>
       document
@@ -1274,8 +1307,6 @@ document
         return cookieValue;
       }
     </script>
-    
-    
 
     <script>
       // JavaScript for interactive elements
@@ -1358,8 +1389,6 @@ document
           }
         });
       });
-      
-     
 
       // Initialize the map when DOM is loaded
       document.addEventListener("DOMContentLoaded", function () {
@@ -1367,8 +1396,6 @@ document
         loadLegalLocations();
         setupEventListeners();
       });
-
-
 
       function setupEventListeners() {
         // Toggle edit mode
@@ -1395,40 +1422,38 @@ document
                 "normal";
               clearSelection();
             }
-          });}
-
-        // Save location button
-        document
-          .getElementById("saveLocationBtn")
-          .addEventListener("click", function () {
-            if (currentLatLng) {
-              showLocationForm();
-            }
           });
+      }
 
-        // Cancel location button
-        document
-          .getElementById("cancelLocationBtn")
-          .addEventListener("click", function () {
-            clearSelection();
-          });
+      // Save location button
+      document
+        .getElementById("saveLocationBtn")
+        .addEventListener("click", function () {
+          if (currentLatLng) {
+            showLocationForm();
+          }
+        });
 
-        // Delete location button
-        document
-          .getElementById("deleteLocationBtn")
-          .addEventListener("click", function () {
-            clearSelection();
-          });
+      // Cancel location button
+      document
+        .getElementById("cancelLocationBtn")
+        .addEventListener("click", function () {
+          clearSelection();
+        });
 
+      // Delete location button
+      document
+        .getElementById("deleteLocationBtn")
+        .addEventListener("click", function () {
+          clearSelection();
+        });
 
-        // Confirm save from form
-        document
-          .getElementById("confirmSaveBtn")
-          .addEventListener("click", function () {
-            saveLocation();
-          });
-
-
+      // Confirm save from form
+      document
+        .getElementById("confirmSaveBtn")
+        .addEventListener("click", function () {
+          saveLocation();
+        });
 
       function handleMapClick(e) {
         // Clear previous temp marker
@@ -1460,7 +1485,6 @@ document
         // Enable save button
         document.getElementById("saveLocationBtn").disabled = false;
         document.getElementById("cancelLocationBtn").disabled = false;
-        
 
         // Make marker draggable
         tempMarker.on("dragend", function (event) {
@@ -1519,13 +1543,6 @@ document
           );
         });
       }
-
-
-
-
-
-
-
 
       function getMarkerIcon(type) {
         // Custom icons based on location type
@@ -1592,12 +1609,6 @@ document
         // Open popup
         marker.openPopup();
       }
-
-     
-
-       
-
-      
 
       function getCSRFToken() {
         // Get CSRF token from cookie or meta tag
