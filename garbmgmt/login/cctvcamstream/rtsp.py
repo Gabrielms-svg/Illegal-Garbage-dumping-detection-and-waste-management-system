@@ -19,11 +19,16 @@ cmd = [
     "-s", f"{width}x{height}",
     "-r", "30",
     "-i", "-",
+
     "-c:v", "libx264",
-    "-preset", "fast",       # balance speed + quality
-    "-tune", "zerolatency",  # keep latency low
-    "-crf", "18",            # better quality
-    "-pix_fmt", "yuv420p",   # VLC-friendly
+    "-profile:v", "baseline",
+    "-level", "3.0",
+    "-preset", "fast",
+    "-tune", "zerolatency",
+    "-crf", "20",
+    "-pix_fmt", "yuv420p",
+    "-movflags", "+faststart",
+
     "-rtsp_transport", "tcp",
     "-f", "rtsp",
     RTSP_URL

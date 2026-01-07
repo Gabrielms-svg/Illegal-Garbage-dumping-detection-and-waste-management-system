@@ -1,0 +1,23 @@
+{
+    "event_id": "20260107_192830",
+    "camera_id": "cam_01",
+    "location": "MG Road, Kochi",
+    "timestamp": "2026-01-07 19:28:30",
+    "actor": "",
+    "dumping_video": "dumping/dumping.mp4",
+    "plates": [
+        {
+            "plate_id": 1,
+            "image": "plates/vehicle_1_20260107_192845.jpg",
+            "confidence": 0.6962491273880005,
+            "frame_time": "0.0s"
+        },
+        {
+            "plate_id": 2,
+            "image": "plates/vehicle_2_20260107_192856.jpg",
+            "confidence": 0.5262225866317749,
+            "frame_time": "2.9s"
+        }
+    ],
+    "plate_processed": true
+}

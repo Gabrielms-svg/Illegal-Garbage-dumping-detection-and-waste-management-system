@@ -78,6 +78,7 @@ class Authority_user(models.Model):
 
 
 # models.py
+# models.py
 class LegalDumpingLocation(models.Model):
     name = models.CharField(max_length=200)
     location_type = models.CharField(
@@ -134,3 +135,5 @@ class NumberPlate(models.Model):
 
     def __str__(self):
         return f"Plate {self.plate_text} for {self.event.event_id}"
+
+
