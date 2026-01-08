@@ -1,11 +1,31 @@
-# evidence_manager.py
 import os
 import json
 import uuid
+import subprocess
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
 from django.core.files import File
 from .models import DumpingEvent, Camera, LegalDumpingLocation
+
+
+def convert_to_webm(input_path, output_path):
+    """
+    Convert video to WebM using FFmpeg
+    """
+    command = [
+        "ffmpeg",
+        "-y",
+        "-i", input_path,
+        "-c:v", "libvpx-vp9",
+        "-crf", "30",
+        "-b:v", "0",
+        "-pix_fmt", "yuv420p",
+        "-c:a", "libopus",
+        output_path
+    ]
+
+    subprocess.run(command, check=True)
+
 
 def sync_and_list_events(camera_id=None):
     base_dir = settings.EVIDENCE_ROOT
@@ -44,21 +64,31 @@ def sync_and_list_events(camera_id=None):
             # location
             location_name = data.get("location")
             if location_name:
-                location_instance = LegalDumpingLocation.objects.filter(name=location_name).first()
-                dumping_event.location = location_instance
+                dumping_event.location = LegalDumpingLocation.objects.filter(
+                    name=location_name
+                ).first()
 
-            # video
-            video_file_name = data.get("dumping_video") or "dumping.mp4"
-            video_file_path = os.path.join(event_path, video_file_name)
+            # ---- VIDEO HANDLING (MP4 → WEBM) ----
+            input_video_name = data.get("dumping_video") or "dumping.mp4"
+            input_video_path = os.path.join(event_path, input_video_name)
 
-            if os.path.exists(video_file_path):
-                # Save video to MEDIA_ROOT
-                media_subpath = f"dumping_videos/{cam_id}/{event_id}/{video_file_name}"
+            if os.path.exists(input_video_path):
+                output_video_name = "dumping.webm"
+                media_subpath = f"dumping_videos/{cam_id}/{event_id}/{output_video_name}"
                 full_media_path = os.path.join(settings.MEDIA_ROOT, media_subpath)
                 os.makedirs(os.path.dirname(full_media_path), exist_ok=True)
 
-                with open(video_file_path, "rb") as f:
-                    dumping_event.dumping_video.save(media_subpath, File(f), save=False)
+                try:
+                    convert_to_webm(input_video_path, full_media_path)
+
+                    with open(full_media_path, "rb") as f:
+                        dumping_event.dumping_video.save(
+                            media_subpath, File(f), save=False
+                        )
+
+                except subprocess.CalledProcessError as e:
+                    print(f"FFmpeg failed for {input_video_path}: {e}")
+                    continue
 
             dumping_event.save()
 
