@@ -541,6 +541,47 @@
         margin: 0 2px;
         color: #d32f2f;
       }
+
+      .modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal img, .modal video {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+
+
+.modal img, .modal video {
+  max-width: 90%;
+  max-height: 90%;
+  margin: auto;
+  display: block;
+}
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+
     </style>
     <link
       rel="stylesheet"
@@ -830,7 +871,7 @@
         
 
 
-        </div>
+       
 
         <!-- Live Cameras Card -->
         <div class="card">
@@ -1102,6 +1143,10 @@
         </div>
       </div>
     </div>
+    <div id="mediaModal" class="modal">
+  <span class="close" onclick="closeMediaModal()">&times;</span>
+  <div id="modalContent"></div>
+</div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1680,74 +1725,87 @@
 document.addEventListener("DOMContentLoaded", loadUserReports);
 
   
-function viewUserReport(reportId) {
-  fetch(`/authority/user-report/${reportId}/`)
-    .then(res => res.json())
-    .then(data => {
-      let html = "<h3>Evidence</h3>";
-      data.media.forEach(url => {
-        if (url.endsWith(".mp4")) {
-          html += `<video src="${url}" controls width="100%"></video>`;
-        } else {
-          html += `<img src="${url}" style="width:100%;margin-bottom:10px;">`;
-        }
-      });
-      alert("Open console for now"); // later replace with modal
-      console.log(html);
-    });
-}
+
 
 
 
 function openMedia(url) {
   const modal = document.getElementById("mediaModal");
-  const content = document.getElementById("modalContent");
+  const container = document.getElementById("modalContent");
 
-  content.innerHTML = "";
+  container.innerHTML = "";
 
   if (url.match(/\.(mp4|webm|ogg)$/i)) {
-    content.innerHTML = `<video src="${url}" controls autoplay></video>`;
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.autoplay = true;
+    container.appendChild(video);
   } else {
-    content.innerHTML = `<img src="${url}" />`;
+    const img = document.createElement("img");
+    img.src = url;
+    container.appendChild(img);
   }
 
   modal.style.display = "flex";
 }
 
-function closeMediaModal() {
-  document.getElementById("mediaModal").style.display = "none";
+
+    
+
+
+
+
+
+function viewUserReport(reportId) {
+  fetch(`/authority/user-report/${reportId}/media/`)
+    .then(res => res.json())
+    .then(data => {
+      console.log("MEDIA RESPONSE:", data);
+
+      const container = document.getElementById("modalContent");
+      container.innerHTML = "";
+
+      if (!data.files || data.files.length === 0) {
+        container.innerHTML = "<p>No evidence uploaded.</p>";
+      }
+
+      data.files.forEach(f => {
+        if (f.type === "image") {
+          const img = document.createElement("img");
+          img.src = f.url;
+          container.appendChild(img);
+        } else {
+          const video = document.createElement("video");
+          video.controls = true;
+          video.src = f.url;
+          container.appendChild(video);
+        }
+      });
+
+      document.getElementById("mediaModal").style.display = "flex";
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Failed to load evidence");
+    });
 }
+
+function closeMediaModal() {
+  const modal = document.getElementById("mediaModal");
+  const content = document.getElementById("modalContent");
+
+  modal.style.display = "none";
+  content.innerHTML = "";
+}
+
+         
+
+
+
 
     </script>
 
-    <div id="mediaModal" class="modal">
-  <span class="close" onclick="closeMediaModal()">&times;</span>
-  <div id="modalContent"></div>
-</div>
-
-<style>
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-}
-.modal img, .modal video {
-  max-width: 90%;
-  max-height: 90%;
-  margin: auto;
-  display: block;
-}
-.close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: white;
-  font-size: 30px;
-  cursor: pointer;
-}
-</style>
 
 
   </body>

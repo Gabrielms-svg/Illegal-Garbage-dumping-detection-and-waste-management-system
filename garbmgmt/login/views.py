@@ -306,3 +306,16 @@ def download_report_zip(request, report_id):
     response["Content-Disposition"] = f'attachment; filename=report_{report.id}.zip'
 
     return response
+
+def get_report_media(request, report_id):
+    evidences = GarbageEvidence.objects.filter(report_id=report_id)
+
+    files = []
+    for e in evidences:
+        url = e.file.url
+        files.append({
+            "url": url,
+            "type": "video" if url.lower().endswith((".mp4", ".webm", ".ogg")) else "image"
+        })
+
+    return JsonResponse({"files": files})

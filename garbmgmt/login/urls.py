@@ -20,7 +20,7 @@ urlpatterns = [
     path("submit-report/", views.submit_garbage_report, name="submit_garbage_report"),
     path("authority/user-reports/", views.user_reports,name='user_reports'),
     path("authority/user-reports/<int:report_id>/download/",views.download_report_zip,name="download_report_zip"),
-
+    path("authority/user-report/<int:report_id>/media/",views.get_report_media,name="get_report_media"),
 
 
 
