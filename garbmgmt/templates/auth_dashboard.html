@@ -1799,7 +1799,37 @@ function closeMediaModal() {
   content.innerHTML = "";
 }
 
-         
+       fetch("/authority/cctv-events/")
+  .then(res => res.json())
+  .then(events => {
+    const grid = document.getElementById("cctvGrid");
+    grid.innerHTML = "";
+
+    events.forEach(ev => {
+      const plateImg = ev.plate_image
+        ? `/media/${ev.plate_image}`
+        : "/static/no-plate.png";
+
+      const confidence = ev.confidence
+        ? (ev.confidence * 100).toFixed(1) + "%"
+        : "N/A";
+
+      grid.innerHTML += `
+        <div class="dump-item">
+          <img src="${plateImg}" alt="Detected Vehicle">
+
+          <div class="dump-info">
+            <strong>${ev.location}</strong><br>
+            Camera: ${ev.camera_id}<br>
+            Time: ${ev.timestamp}<br>
+            Plate Confidence: ${confidence}
+          </div>
+        </div>
+      `;
+    });
+  })
+  .catch(err => console.error("CCTV load error:", err));
+  
 
 
 

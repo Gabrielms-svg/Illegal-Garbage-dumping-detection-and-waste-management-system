@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate , login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-import re
+import re,os
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -20,7 +20,7 @@ from .models import DumpingEvent
 from .models import GarbageReport, GarbageEvidence,Normal_user
 import zipfile
 import io
-
+from django.conf import settings
 
 def home(request):
     events = sync_and_list_events()
@@ -319,3 +319,75 @@ def get_report_media(request, report_id):
         })
 
     return JsonResponse({"files": files})
+
+
+
+def cctv_detected_events(request):
+    events = []
+
+    base_path = settings.EVIDENCE_ROOT  # login/evidence
+
+    for cam in os.listdir(base_path):
+        cam_path = os.path.join(base_path, cam)
+
+        if not os.path.isdir(cam_path):
+            continue
+
+        for event_folder in os.listdir(cam_path):
+            event_path = os.path.join(cam_path, event_folder)
+            json_path = os.path.join(event_path, "event.json")
+
+            if not os.path.exists(json_path):
+                continue
+
+            with open(json_path, "r") as f:
+                data = json.load(f)
+
+            # Extract first plate (if any)
+            plate_img = None
+            plate_conf = None
+
+            if data.get("plates"):
+                plate_img = data["plates"][0].get("image")
+                plate_conf = data["plates"][0].get("confidence")
+
+            events.append({
+                "event_id": data.get("event_id"),
+                "camera_id": data.get("camera_id"),
+                "location": data.get("location"),
+                "timestamp": data.get("timestamp"),
+                "plate_image": plate_img,
+                "confidence": plate_conf,
+                "video": data.get("dumping_video"),
+            })
+
+    return JsonResponse(events, safe=False)
+
+# views.py
+
+
+def cctv_events(request):
+    base_dir = os.path.join(settings.BASE_DIR, "login", "evidence")
+    events = []
+
+    for cam in os.listdir(base_dir):
+        cam_path = os.path.join(base_dir, cam)
+
+        if not os.path.isdir(cam_path):
+            continue
+
+        for event_folder in os.listdir(cam_path):
+            event_path = os.path.join(cam_path, event_folder, "event.json")
+
+            if os.path.exists(event_path):
+                with open(event_path, "r") as f:
+                    data = json.load(f)
+
+                    # add relative media paths
+                    data["camera_id"] = cam
+                    data["plate_image"] = f"login/evidence/{cam}/{event_folder}/{data.get('plate_image','')}"
+                    data["timestamp"] = data.get("timestamp")
+
+                    events.append(data)
+
+    return JsonResponse(events, safe=False)
