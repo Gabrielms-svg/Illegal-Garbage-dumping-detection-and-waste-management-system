@@ -23,6 +23,7 @@ urlpatterns = [
     path("authority/user-report/<int:report_id>/media/",views.get_report_media,name="get_report_media"),
     path("authority/cctv-events/", views.cctv_detected_events, name="cctv_events"),
     path("authority/cctv-events/", views.cctv_events, name="cctv_events"),
+    path("authority/cctv-event/<int:id>/", views.cctv_event_detail),
 
 
 

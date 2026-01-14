@@ -117,10 +117,8 @@ class DumpingEvent(models.Model):
     dumping_video = models.FileField(upload_to="evidence/%Y/%m/%d/dumping/")
     
     # Add this line for location
-    location = models.ForeignKey(
-        LegalDumpingLocation,  # replace with your location model
-        on_delete=models.CASCADE,
-        null=True,             # optional, if some events may not have a location
+    illegal_location = models.CharField(
+        max_length=255,
         blank=True
     )
     

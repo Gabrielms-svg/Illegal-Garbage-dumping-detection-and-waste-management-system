@@ -268,6 +268,7 @@
 
       .action-buttons {
         display: flex;
+        align-items: center;
         gap: 0.5rem;
       }
 
@@ -280,10 +281,10 @@
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.3s;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: 6px;
         font-size: 0.9rem;
       }
 
@@ -368,7 +369,7 @@
         background-color: #000;
       }
 
-      .camera-info {
+      {% comment %} .camera-info {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -379,7 +380,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-      }
+      }  {% endcomment %}
 
       .camera-status {
         display: flex;
@@ -542,15 +543,16 @@
         color: #d32f2f;
       }
 
-      .modal {
+.modal {
+  display: none; /* hide initially */
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
 }
 .modal-content {
   background: #fff;
@@ -667,18 +669,12 @@
               <select id="sort-by">
                 <option value="recent">Sort by: Most Recent</option>
                 <option value="oldest">Sort by: Oldest First</option>
-                <option value="severity">Sort by: Severity</option>
                 <option value="location">Sort by: Location</option>
               </select>
 
               <input type="date" id="date-filter" value="2023-10-15" />
 
-              <select id="status-filter">
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="investigating">Investigating</option>
-                <option value="resolved">Resolved</option>
-              </select>
+              
             </div>
 
             <button class="btn btn-secondary">
@@ -694,135 +690,39 @@
                   <th>ID</th>
                   <th>Date & Time</th>
                   <th>Location</th>
-                  <th>Severity</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                  <th>Evidence</th>
+                  <th>Download</th>
                 </tr>
               </thead>
               <tbody>
-                <!-- Django Template Tag for loop -->
-                <!-- {% for offence in offences %} -->
-                <tr>
-                  <td>#DMP-2023-127</td>
-                  <td>2023-10-15 09:32</td>
-                  <td>Downtown, 5th Ave</td>
-                  <td>
-                    <span class="status-badge status-pending">High</span>
-                  </td>
-                  <td>
-                    <span class="status-badge status-investigating"
-                      >Investigating</span
-                    >
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <button
-                        class="btn btn-small"
-                        onclick="viewOffenceDetails('DMP-2023-127')"
-                      >
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button
-                        class="btn btn-secondary btn-small"
-                        onclick="downloadReport('DMP-2023-127')"
-                      >
-                        <i class="fas fa-download"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+{% for event in cctv_events %}
+<tr data-timestamp="{{ event.timestamp|date:'Y-m-d H:i:s' }}" data-location="{{ event.illegal_location|default:'Unknown location' }}">
+  <td>{{ forloop.counter }}</td>
+  <td>{{ event.timestamp|date:"Y-m-d H:i" }}</td>
+  <td>{{ event.illegal_location|default:"Unknown location" }}</td>
+  <td>
+    <div class="action-buttons">
+      <button class="btn btn-small" onclick="viewCCTVEvent('{{ event.id }}')">
+        <i class="fas fa-eye"></i> View
+      </button>
+      
+    </div>
+  </td>
+  <td>
+    <a class="btn btn-secondary btn-small" href="{{ event.dumping_video.url }}" download>
+        <i class="fas fa-download"></i> Download
+      </a>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="5" style="text-align:center;">No CCTV detected events yet</td>
+</tr>
+{% endfor %}
 
-                <tr>
-                  <td>#DMP-2023-126</td>
-                  <td>2023-10-14 16:45</td>
-                  <td>Industrial Zone, Sector B</td>
-                  <td>
-                    <span class="status-badge status-pending">Medium</span>
-                  </td>
-                  <td>
-                    <span class="status-badge status-pending">Pending</span>
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="btn btn-small">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-secondary btn-small">
-                        <i class="fas fa-download"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
 
-                <tr>
-                  <td>#DMP-2023-125</td>
-                  <td>2023-10-14 11:20</td>
-                  <td>Riverside Park</td>
-                  <td>
-                    <span class="status-badge status-pending">High</span>
-                  </td>
-                  <td>
-                    <span class="status-badge status-resolved">Resolved</span>
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="btn btn-small">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-secondary btn-small">
-                        <i class="fas fa-download"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+</tbody>
 
-                <tr>
-                  <td>#DMP-2023-124</td>
-                  <td>2023-10-13 14:15</td>
-                  <td>North Residential Area</td>
-                  <td>
-                    <span class="status-badge status-pending">Low</span>
-                  </td>
-                  <td>
-                    <span class="status-badge status-investigating"
-                      >Investigating</span
-                    >
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="btn btn-small">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-secondary btn-small">
-                        <i class="fas fa-download"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>#DMP-2023-123</td>
-                  <td>2023-10-12 18:30</td>
-                  <td>South Market Street</td>
-                  <td>
-                    <span class="status-badge status-pending">Medium</span>
-                  </td>
-                  <td>
-                    <span class="status-badge status-resolved">Resolved</span>
-                  </td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="btn btn-small">
-                        <i class="fas fa-eye"></i> View
-                      </button>
-                      <button class="btn btn-secondary btn-small">
-                        <i class="fas fa-download"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <!-- {% endfor %} -->
-              </tbody>
             </table>
           </div>
 
@@ -851,21 +751,47 @@
 
           <div class="offences-container">
             <table class="offences-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Reported At</th>
-                  <th>Location</th>
-                  <th>Media</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="userReportsTable">
-                
-              
-              </tbody>
-            </table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Reported At</th>
+      <th>Location</th>
+      <th>Media</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for report in reports %}
+      <tr>
+        <td>#USR-{{ report.id }}</td>
+        <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
+        <td>{{ report.location }}</td>
+
+        <!-- Media column -->
+        <td>
+          {% if report.evidences.all %}
+            {% for ev in report.evidences.all %}
+              <a href="{{ ev.file.url }}" target="_blank">
+                <img src="{{ ev.file.url }}" width="50" style="margin-right:5px; border:1px solid #ccc;"/>
+              </a>
+            {% endfor %}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+
+        <!-- Actions column -->
+        <td>
+          <a class="btn btn-secondary btn-small"
+             href="{% url 'download_report_zip' report.id %}">
+            ⬇️ Download ZIP
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
           </div>
 
         
@@ -896,9 +822,10 @@
               />
             </div>
             <div class="camera-info">
+              
               <div>
                 <strong>Camera #05</strong><br />
-                <small>Downtown - 5th Ave</small>
+                <small>Location - MG Road, Kochi</small>
               </div>
               <div class="status-indicator status-active"></div>
             </div>
@@ -1701,9 +1628,7 @@
     <td>${r.reported_at}</td>
     <td>${r.location}</td>
     <td>${mediaIcons}</td>
-    <td>
-      <span class="status-badge status-pending">${r.status}</span>
-    </td>
+    
     <td>
       <button class="btn btn-small" onclick="viewUserReport(${r.id})">
         <i class="fas fa-eye"></i> View
@@ -1831,6 +1756,74 @@ function closeMediaModal() {
   .catch(err => console.error("CCTV load error:", err));
   
 
+function viewCCTVEvent(eventId) {
+  fetch(`/authority/cctv-event/${eventId}/`)
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("modalContent");
+      container.innerHTML = "";
+
+      const video = document.createElement("video");
+      video.src = data.video_url;
+      video.controls = true;
+      video.autoplay = true;
+
+      container.appendChild(video);
+      document.getElementById("mediaModal").style.display = "flex";
+    });
+}
+
+const tableBody = document.querySelector(".offences-table tbody");
+
+function sortAndFilterTable() {
+  const sortBy = sortSelect.value;
+  const selectedDate = dateFilter.value;
+  const status = statusFilter.value;
+
+  // Get all rows as array
+  let rows = Array.from(tableBody.querySelectorAll("tr"));
+
+  // Remove empty row if exists
+  rows = rows.filter(row => !row.classList.contains('empty-row'));
+
+  // Filter by date
+  if (selectedDate) {
+    rows = rows.filter(row => {
+      const rowDate = row.dataset.timestamp.split(" ")[0]; // 'YYYY-MM-DD'
+      return rowDate === selectedDate;
+    });
+  }
+
+  // Filter by status
+  if (status !== "all") {
+    rows = rows.filter(row => row.dataset.status === status);
+  }
+
+  // Sort
+  if (sortBy === "recent") {
+    rows.sort((a, b) => new Date(b.dataset.timestamp) - new Date(a.dataset.timestamp));
+  } else if (sortBy === "oldest") {
+    rows.sort((a, b) => new Date(a.dataset.timestamp) - new Date(b.dataset.timestamp));
+  } else if (sortBy === "location") {
+    rows.sort((a, b) => a.dataset.location.localeCompare(b.dataset.location));
+  }
+
+  // Re-append rows
+  tableBody.innerHTML = "";
+  if (rows.length === 0) {
+    tableBody.innerHTML = `<tr class="empty-row"><td colspan="6" style="text-align:center;">No CCTV detected events yet</td></tr>`;
+  } else {
+    rows.forEach(r => tableBody.appendChild(r));
+  }
+}
+
+// Add event listeners
+sortSelect.addEventListener("change", sortAndFilterTable);
+dateFilter.addEventListener("change", sortAndFilterTable);
+statusFilter.addEventListener("change", sortAndFilterTable);
+
+// Initial sort
+sortAndFilterTable();
 
 
 

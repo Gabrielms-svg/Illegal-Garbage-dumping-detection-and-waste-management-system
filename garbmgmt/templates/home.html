@@ -85,7 +85,7 @@
               <div class="offense-time">{{ event.timestamp|time:"H:i A" }}</div>
             </div>
             <div class="offense-location">
-              {% if event.camera %} {{ event.camera.location }} {% else %}
+              {% if event.illegal_location %} {{ event.illegal_location }} {% else %}
               Unknown {% endif %}
             </div>
             <h3 class="offense-title">Illegal Dumping Event</h3>

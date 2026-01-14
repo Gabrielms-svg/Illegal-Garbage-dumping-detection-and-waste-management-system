@@ -127,7 +127,16 @@ def auth_logout(request):
 def auth_dashboard(request):
     if 'authority_user_id' not in request.session:
         return redirect('auth_login')
-    return render(request,'auth_dashboard.html')
+    
+    reports = GarbageReport.objects.prefetch_related("evidences").order_by("-created_at")
+
+    
+    cctv_events = DumpingEvent.objects.all().order_by('-timestamp')
+    context = {
+        "cctv_events": cctv_events,
+        "reports": reports
+    }
+    return render(request,'auth_dashboard.html',context)
 
 
 
@@ -286,7 +295,8 @@ def user_reports(request):
             "media": [e.file.url for e in r.evidences.all()]
         })
 
-    return JsonResponse(data, safe=False)
+    # return JsonResponse(data, safe=False)
+    # return render(request,)
 
 
 
@@ -391,3 +401,11 @@ def cctv_events(request):
                     events.append(data)
 
     return JsonResponse(events, safe=False)
+
+def cctv_event_detail(request, id):
+    event = get_object_or_404(DumpingEvent, id=id)
+    return JsonResponse({
+        "event_id": event.event_id,
+        "location": event.illegal_location,
+        "video_url": event.dumping_video.url
+    })

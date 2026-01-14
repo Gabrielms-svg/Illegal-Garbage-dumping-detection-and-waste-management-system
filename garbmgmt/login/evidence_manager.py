@@ -5,7 +5,7 @@ import subprocess
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
 from django.core.files import File
-from .models import DumpingEvent, Camera, LegalDumpingLocation
+from .models import DumpingEvent, Camera
 
 
 def convert_to_webm(input_path, output_path):
@@ -62,11 +62,9 @@ def sync_and_list_events(camera_id=None):
             )
 
             # location
-            location_name = data.get("location")
-            if location_name:
-                dumping_event.location = LegalDumpingLocation.objects.filter(
-                    name=location_name
-                ).first()
+            location_name = data.get("location", "")
+            dumping_event.illegal_location = location_name
+
 
             # ---- VIDEO HANDLING (MP4 → WEBM) ----
             input_video_name = data.get("dumping_video") or "dumping.mp4"
