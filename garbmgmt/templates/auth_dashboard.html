@@ -611,10 +611,9 @@
       <div class="nav-links">
         <div class="authority-badge">
           <i class="fas fa-user-shield"></i>
-          <!-- Django Template Tag for Username -->
-          <!-- {% if user.is_authenticated %} -->
-          <span>Authority User: <strong>CityAdmin</strong></span>
-          <!-- {% endif %} -->
+          
+          <span>Authority User: <strong>{{ request.session.authority_user_name }}</strong></span>
+          
         </div>
 
         <a href="#"><i class="fas fa-info-circle"></i> About</a>
@@ -635,8 +634,8 @@
             dumping locations.
           </p>
           <p>
-            <strong>Last updated:</strong> Today, 10:45 AM |
-            <strong>Active cameras:</strong> 12/15
+            <strong>Last updated:</strong> {{ last_updated|date:"M d, Y h:i A" }}
+            <strong>Active cameras:</strong> 1/15
           </p>
         </div>
 

@@ -23,6 +23,7 @@ import io
 from django.conf import settings
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from django.utils.timezone import now
 
 
 def home(request):
@@ -83,6 +84,7 @@ def auth_login(request):
 
             if user.password == password:  # direct comparison
                 request.session['authority_user_id'] = user.id
+                request.session["authority_user_name"] = user.first_name
                 messages.success(request, "Authority Login Successful!")
                 return redirect("auth_dashboard")
             else:
@@ -144,7 +146,8 @@ def auth_dashboard(request):
     cctv_events = DumpingEvent.objects.all().order_by('-timestamp')
     context = {
         "cctv_events": cctv_events,
-        "reports": reports
+        "reports": reports,
+        "last_updated": now(),
     }
     return render(request,'auth_dashboard.html',context)
 
