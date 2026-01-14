@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dumping Analytics Dashboard</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <a href="{% url 'auth_dashboard' %}" class="btn btn-secondary">
+    ⬅ Back to Dashboard
+    </a>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 16px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 24px 0 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: #ffffff;
+            padding: 10px 12px 14px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .chart-wrapper {
+            flex: 1;
+        }
+
+        .chart-wrapper canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: #ddd;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🚮 Illegal Dumping Analytics Dashboard</h1>
+
+<hr>
+
+<!-- ================= CCTV ANALYTICS ================= -->
+<h2>📹 CCTV Analytics</h2>
+
+<div class="grid">
+    <div class="chart-card">
+        <div class="chart-title">Dumping Events Over Time</div>
+        <div class="chart-wrapper">
+            <canvas id="cctvTimeChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Dumping Frequency by Location</div>
+        <div class="chart-wrapper">
+            <canvas id="cctvLocationChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- ================= USER ANALYTICS ================= -->
+<h2>👥 User Reports Analytics</h2>
+
+<div class="grid">
+    <div class="chart-card">
+        <div class="chart-title">User Reports Over Time</div>
+        <div class="chart-wrapper">
+            <canvas id="userTimeChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Reports by Severity</div>
+        <div class="chart-wrapper">
+            <canvas id="severityChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Reports by Location</div>
+        <div class="chart-wrapper">
+            <canvas id="userLocationChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Evidence Count per Report</div>
+        <div class="chart-wrapper">
+            <canvas id="evidenceChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- ================= COMBINED ANALYTICS ================= -->
+<h2>📊 Combined Analytics</h2>
+
+<div class="grid">
+    <div class="chart-card">
+        <div class="chart-title">Hotspot Comparison (CCTV vs User Reports)</div>
+        <div class="chart-wrapper">
+            <canvas id="hotspotChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Dumping Activity vs User Participation</div>
+        <div class="chart-wrapper">
+            <canvas id="combinedTimeChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Severity vs CCTV Detection</div>
+        <div class="chart-wrapper">
+            <canvas id="severityVsCctvChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Camera Efficiency / Report Validation</div>
+        <div class="chart-wrapper">
+            <canvas id="cameraEfficiencyChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ================= DATA FROM DJANGO ================= -->
+<script>
+    const cctvTimeLabels = {{ cctv_time_labels|safe }};
+    const cctvTimeCounts = {{ cctv_time_counts|safe }};
+
+    const cctvLocationLabels = {{ cctv_location_labels|safe }};
+    const cctvLocationCounts = {{ cctv_location_counts|safe }};
+
+    const userTimeLabels = {{ user_time_labels|safe }};
+    const userTimeCounts = {{ user_time_counts|safe }};
+
+    const severityLabels = {{ severity_labels|safe }};
+    const severityCounts = {{ severity_counts|safe }};
+
+    const userLocationLabels = {{ user_location_labels|safe }};
+    const userLocationCounts = {{ user_location_counts|safe }};
+
+    const evidenceReportLabels = {{ evidence_report_labels|safe }};
+    const evidenceReportCounts = {{ evidence_report_counts|safe }};
+
+    const hotspotLabels = {{ hotspot_labels|safe }};
+    const hotspotCctvCounts = {{ hotspot_cctv_counts|safe }};
+    const hotspotUserCounts = {{ hotspot_user_counts|safe }};
+
+    const combinedTimeLabels = {{ combined_time_labels|safe }};
+    const combinedCctvCounts = {{ combined_cctv_counts|safe }};
+    const combinedUserCounts = {{ combined_user_counts|safe }};
+
+    const severityVsCctvLabels = {{ severity_vs_cctv_labels|safe }};
+    const severityVsCctvCounts = {{ severity_vs_cctv_counts|safe }};
+
+    const cameraLabels = {{ camera_labels|safe }};
+    const cameraEfficiencyCounts = {{ camera_efficiency_counts|safe }};
+</script>
+
+<!-- ================= CHART INITIALIZATION ================= -->
+<script>
+function chartOptions() {
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: true }
+        }
+    };
+}
+
+/* CCTV */
+new Chart(cctvTimeChart, {
+    type: 'line',
+    data: { labels: cctvTimeLabels, datasets: [{ label: 'CCTV Dumping Events', data: cctvTimeCounts }] },
+    options: chartOptions()
+});
+
+new Chart(cctvLocationChart, {
+    type: 'bar',
+    data: { labels: cctvLocationLabels, datasets: [{ label: 'Dumping Count', data: cctvLocationCounts }] },
+    options: chartOptions()
+});
+
+/* USER */
+new Chart(userTimeChart, {
+    type: 'line',
+    data: { labels: userTimeLabels, datasets: [{ label: 'User Reports', data: userTimeCounts }] },
+    options: chartOptions()
+});
+
+new Chart(severityChart, {
+    type: 'pie',
+    data: { labels: severityLabels, datasets: [{ data: severityCounts }] },
+    options: chartOptions()
+});
+
+new Chart(userLocationChart, {
+    type: 'bar',
+    data: { labels: userLocationLabels, datasets: [{ label: 'Reports', data: userLocationCounts }] },
+    options: chartOptions()
+});
+
+new Chart(evidenceChart, {
+    type: 'bar',
+    data: { labels: evidenceReportLabels, datasets: [{ label: 'Evidence Count', data: evidenceReportCounts }] },
+    options: chartOptions()
+});
+
+/* COMBINED */
+new Chart(hotspotChart, {
+    type: 'bar',
+    data: {
+        labels: hotspotLabels,
+        datasets: [
+            { label: 'CCTV', data: hotspotCctvCounts },
+            { label: 'User Reports', data: hotspotUserCounts }
+        ]
+    },
+    options: chartOptions()
+});
+
+new Chart(combinedTimeChart, {
+    type: 'line',
+    data: {
+        labels: combinedTimeLabels,
+        datasets: [
+            { label: 'CCTV Events', data: combinedCctvCounts },
+            { label: 'User Reports', data: combinedUserCounts }
+        ]
+    },
+    options: chartOptions()
+});
+
+new Chart(severityVsCctvChart, {
+    type: 'bar',
+    data: { labels: severityVsCctvLabels, datasets: [{ label: 'CCTV Events', data: severityVsCctvCounts }] },
+    options: chartOptions()
+});
+
+new Chart(cameraEfficiencyChart, {
+    type: 'bar',
+    data: { labels: cameraLabels, datasets: [{ label: 'Validated Events', data: cameraEfficiencyCounts }] },
+    options: chartOptions()
+});
+</script>
+
+</body>
+</html>

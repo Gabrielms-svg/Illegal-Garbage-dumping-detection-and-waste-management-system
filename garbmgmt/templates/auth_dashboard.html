@@ -992,22 +992,14 @@
       <div class="card">
         <div class="card-header">
           <h3>
-            <i class="fas fa-camera card-icon"></i> AI-Detected Illegal Dumps
+            <i class="fas fa-camera card-icon"></i> Detection analytics
           </h3>
-          <a
-            href="#"
-            style="
-              text-decoration: none;
-              color: var(--primary-color);
-              font-size: 0.9rem;
-            "
-            >View All</a
-          >
+          
+          
         </div>
 
         <p>
-          Recent illegal dumping incidents detected by AI surveillance (last 24
-          hours):
+          View analytics report of detected dumps
         </p>
 
         <div class="dumps-grid">
@@ -1063,11 +1055,12 @@
           <!-- {% endfor %} -->
         </div>
 
-        <div style="margin-top: 1rem">
-          <button class="btn" style="width: 100%">
-            <i class="fas fa-chart-bar"></i> View Detection Analytics
+        <a href="{% url 'analytics_dashboard' %}">
+          <button class="btn btn-primary">
+            View Analytics
           </button>
-        </div>
+        </a>
+
       </div>
     </div>
     <div id="mediaModal" class="modal">

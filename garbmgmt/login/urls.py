@@ -24,7 +24,7 @@ urlpatterns = [
     path("authority/cctv-events/", views.cctv_detected_events, name="cctv_events"),
     path("authority/cctv-events/", views.cctv_events, name="cctv_events"),
     path("authority/cctv-event/<int:id>/", views.cctv_event_detail),
-
+    path("analytics/", views.analytics_dashboard, name="analytics_dashboard"),
 
 
     
