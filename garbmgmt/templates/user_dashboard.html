@@ -421,9 +421,8 @@
             <div class="user-info">
                 <i class="fas fa-user-circle"></i>
                 <!-- Django Template Tag for Username -->
-                <!-- {% if user.is_authenticated %} -->
-                <span>Welcome, <strong>JohnDoe</strong></span>
-                <!-- {% endif %} -->
+                <span>Welcome, <strong>{{ request.session.normal_user_name }}</strong> </span>
+
             </div>
             
             

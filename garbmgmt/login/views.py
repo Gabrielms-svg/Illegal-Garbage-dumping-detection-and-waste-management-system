@@ -60,6 +60,7 @@ def user_login(request):
             # check hashed password
             if check_password(password, user.password):
                 request.session["normal_user_id"] = user.id
+                request.session["normal_user_name"] = user.fullname
                 return redirect("user_dashboard")
             else:
                 messages.error(request, "Invalid password")
@@ -98,6 +99,12 @@ def auth_login(request):
 def user_dashboard(request):
     if 'normal_user_id' not in request.session:
         return redirect('user_login')
+    user = Normal_user.objects.get(id=request.session['normal_user_id'])
+
+    context = {
+        'logged_user': user,
+
+    }
     return render(request, 'user_dashboard.html')
 
 
