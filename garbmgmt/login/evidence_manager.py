@@ -5,7 +5,7 @@ import subprocess
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
 from django.core.files import File
-from .models import DumpingEvent, Camera
+from .models import DumpingEvent, Camera, NumberPlate
 
 
 def convert_to_webm(input_path, output_path):
@@ -89,6 +89,40 @@ def sync_and_list_events(camera_id=None):
                     continue
 
             dumping_event.save()
+            
+            # ---- PLATES HANDLING ----
+            plates_data = data.get("plates", [])
+            for p_data in plates_data:
+                plate_img_name = p_data.get("image")
+                if not plate_img_name:
+                    continue
+                
+                # Check if this plate already exists for this event (simple check)
+                # Ideally, we might want to check by image name or something unique, 
+                # but NumberPlate doesn't have a unique constraint other than ID.
+                # Since we check if DumpingEvent exists at the top, we are only creating new events here.
+                
+                plate_text = p_data.get("text", "") # Assuming 'text' key exists, or default empty
+                
+                # Path to plate image on disk
+                plate_src_path = os.path.join(event_path, plate_img_name)
+                
+                if os.path.exists(plate_src_path):
+                    # Destination in MEDIA_ROOT
+                    plate_media_subpath = f"evidence/{timestamp.strftime('%Y/%m/%d')}/plates/{event_id}_{plate_img_name}"
+                    full_plate_path = os.path.join(settings.MEDIA_ROOT, plate_media_subpath)
+                    os.makedirs(os.path.dirname(full_plate_path), exist_ok=True)
+                    
+                    # Copy/Save image
+                    # We can just read and save
+                    with open(plate_src_path, "rb") as f:
+                        np_obj = NumberPlate(
+                             event=dumping_event,
+                             plate_text=plate_text
+                        )
+                        np_obj.image.save(f"{event_id}_{plate_img_name}", File(f))
+                        # np_obj.save() called by inner save
+
 
     # Return events
     if camera_id:

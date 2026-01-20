@@ -1,0 +1,67 @@
+in app.py in login
+
+
+
+from django.apps import AppConfig
+import subprocess
+import threading
+import sys
+import os
+import atexit
+import signal
+
+class LoginConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'login'
+
+    def ready(self):
+        if 'runserver' in sys.argv:
+            threading.Thread(target=self.start_services, daemon=True).start()
+
+    def start_services(self):
+        base_path = r"C:\pro\webapp\garbmgmt\login"
+        self.processes = []
+
+        creationflags = subprocess.CREATE_NEW_PROCESS_GROUP  # Windows-specific
+
+        try:
+            # MediaMTX
+            mediamtx_path = os.path.join(base_path, r"cctvcamstream\mediamtx_v1.15.6_windows_amd64\mediamtx.exe")
+            p1 = subprocess.Popen([mediamtx_path], creationflags=creationflags)
+            self.processes.append(p1)
+
+            # RTSP Python script
+            rtsp_path = os.path.join(base_path, r"cctvcamstream\rtsp.py")
+            p2 = subprocess.Popen([sys.executable, rtsp_path], creationflags=creationflags)
+            self.processes.append(p2)
+
+            # Garbage detection
+            mgarbdetect_path = os.path.join(base_path, r"ml\mgarbdetect.py")
+            p3 = subprocess.Popen([sys.executable, mgarbdetect_path], creationflags=creationflags)
+            self.processes.append(p3)
+
+            # Number plate detection
+            numberplate_path = os.path.join(base_path, r"ml\numberplate3.py")
+            p4 = subprocess.Popen([sys.executable, numberplate_path], creationflags=creationflags)
+            self.processes.append(p4)
+
+            print("✅ All scripts started successfully!")
+
+            # Register exit handler
+            atexit.register(self.shutdown_processes)
+
+        except Exception as e:
+            print("❌ Error starting services:", e)
+
+    def shutdown_processes(self):
+        print("\n🛑 Shutting down all subprocesses...")
+        for p in self.processes:
+            try:
+                # Send CTRL+C to the process group
+                if os.name == 'nt':
+                    p.send_signal(signal.CTRL_BREAK_EVENT)
+                else:
+                    p.terminate()
+                p.wait(timeout=5)
+            except Exception as e:
+                print(f"Error terminating process {p.pid}: {e}")

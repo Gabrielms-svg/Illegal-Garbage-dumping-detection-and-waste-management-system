@@ -1,802 +1,797 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dump Surveillance AI - Authority Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --primary-color: #1a237e;
-        --primary-dark: #0d153a;
-        --primary-light: #534bae;
-        --secondary-color: #ff9800;
-        --secondary-dark: #ef6c00;
-        --accent-color: #d32f2f;
-        --light-bg: #f5f5f5;
-        --dark-text: #333;
-        --light-text: #666;
-        --white: #ffffff;
-        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        --border-radius: 8px;
-      }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dump Surveillance AI - Authority Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #1a237e;
+      --primary-dark: #0d153a;
+      --primary-light: #534bae;
+      --secondary-color: #ff9800;
+      --secondary-dark: #ef6c00;
+      --accent-color: #d32f2f;
+      --light-bg: #f5f5f5;
+      --dark-text: #333;
+      --light-text: #666;
+      --white: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+    }
 
-      body {
-        font-family: "Roboto", sans-serif;
-        color: var(--dark-text);
-        background-color: var(--light-bg);
-        line-height: 1.6;
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      h1,
-      h2,
-      h3,
-      h4 {
-        font-family: "Poppins", sans-serif;
-        font-weight: 600;
-      }
+    body {
+      font-family: "Roboto", sans-serif;
+      color: var(--dark-text);
+      background-color: var(--light-bg);
+      line-height: 1.6;
+    }
 
-      /* Navbar Styles */
-      .navbar {
-        background-color: var(--white);
-        box-shadow: var(--shadow);
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-      }
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: "Poppins", sans-serif;
+      font-weight: 600;
+    }
 
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
+    /* Navbar Styles */
+    .navbar {
+      background-color: var(--white);
+      box-shadow: var(--shadow);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-      .logo-icon {
-        color: var(--primary-color);
-        font-size: 1.8rem;
-      }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-      .logo h1 {
-        font-size: 1.5rem;
-        color: var(--primary-dark);
-      }
+    .logo-icon {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+    }
 
-      .nav-links {
-        display: flex;
-        gap: 1.5rem;
-        align-items: center;
-      }
+    .logo h1 {
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+    }
 
-      .nav-links a {
-        text-decoration: none;
-        color: var(--dark-text);
-        font-weight: 500;
-        transition: color 0.3s;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
 
-      .nav-links a:hover {
-        color: var(--primary-color);
-      }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--dark-text);
+      font-weight: 500;
+      transition: color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
-      .nav-links .sign-out {
-        color: var(--accent-color);
-      }
+    .nav-links a:hover {
+      color: var(--primary-color);
+    }
 
-      .nav-links .sign-out:hover {
-        color: #b71c1c;
-      }
+    .nav-links .sign-out {
+      color: var(--accent-color);
+    }
 
-      .authority-badge {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background-color: #e8eaf6;
-        padding: 8px 15px;
-        border-radius: 20px;
-      }
+    .nav-links .sign-out:hover {
+      color: #b71c1c;
+    }
 
-      .authority-badge i {
-        color: var(--primary-color);
-      }
+    .authority-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #e8eaf6;
+      padding: 8px 15px;
+      border-radius: 20px;
+    }
 
-      /* Main Content */
-      .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 2rem;
+    .authority-badge i {
+      color: var(--primary-color);
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .authority-welcome {
+      background: linear-gradient(to right,
+          var(--primary-color),
+          var(--primary-light));
+      color: var(--white);
+      padding: 1.5rem 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      flex-grow: 1;
+      margin-right: 1rem;
+    }
+
+    .authority-welcome h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .stats-card {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    .stats-card .number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stats-card .label {
+      color: var(--light-text);
+      font-size: 0.9rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .card-header h3 {
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    /* Offences Table */
+    .offences-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .offences-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .offences-table th {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-dark);
+      position: sticky;
+      top: 0;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .offences-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .offences-table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .status-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background-color: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .status-investigating {
+      background-color: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .status-resolved {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: var(--white);
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-dark);
+    }
+
+    .btn-danger {
+      background-color: var(--accent-color);
+    }
+
+    .btn-danger:hover {
+      background-color: #b71c1c;
+    }
+
+    .btn-small {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .filters-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 0.6rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: "Roboto", sans-serif;
+    }
+
+    .download-options {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #eee;
+    }
+
+    /* Live Cameras */
+    .cameras-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .camera-card {
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      /* creates stacking context */
+      height: 200px;
+      background-color: #000;
+      z-index: 1;
+      /* prevents overlay overlap */
+    }
+
+    .camera-feed {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* fills card correctly */
+      display: block;
+      /* removes inline-gap issues */
+      background-color: #000;
+    }
+
+    /* .camera-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    } */
+
+    .camera-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .status-active {
+      background-color: #4caf50;
+    }
+
+    .status-inactive {
+      background-color: #f44336;
+    }
+
+    /* Map Container */
+    .map-container {
+      height: 300px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-placeholder {
+      text-align: center;
+      color: var(--light-text);
+    }
+
+    .map-placeholder i {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .map-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* Recent Dumps Grid */
+    .dumps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .dump-item {
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      height: 150px;
+    }
+
+    .dump-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .dump-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .dump-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid #ddd;
+      color: var(--light-text);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
       }
 
       .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
+        flex-direction: column;
+        gap: 1rem;
       }
 
       .authority-welcome {
-        background: linear-gradient(
-          to right,
-          var(--primary-color),
-          var(--primary-light)
-        );
-        color: var(--white);
-        padding: 1.5rem 2rem;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        flex-grow: 1;
-        margin-right: 1rem;
-      }
-
-      .authority-welcome h2 {
-        margin-bottom: 0.5rem;
+        margin-right: 0;
+        width: 100%;
       }
 
       .stats-card {
-        background-color: var(--white);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        padding: 1.5rem;
-        min-width: 200px;
-        text-align: center;
-      }
-
-      .stats-card .number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        line-height: 1;
-        margin-bottom: 0.5rem;
-      }
-
-      .stats-card .label {
-        color: var(--light-text);
-        font-size: 0.9rem;
-      }
-
-      .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
-      }
-
-      .card {
-        background-color: var(--white);
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-        padding: 1.5rem;
-        transition: transform 0.3s;
-      }
-
-      .card:hover {
-        transform: translateY(-3px);
-      }
-
-      .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.8rem;
-        border-bottom: 1px solid #eee;
-      }
-
-      .card-header h3 {
-        color: var(--primary-dark);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .card-icon {
-        font-size: 1.5rem;
-        color: var(--primary-color);
-      }
-
-      /* Offences Table */
-      .offences-container {
-        max-height: 500px;
-        overflow-y: auto;
-      }
-
-      .offences-table {
         width: 100%;
-        border-collapse: collapse;
       }
+    }
 
-      .offences-table th {
-        background-color: #f5f5f5;
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
         padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        color: var(--primary-dark);
-        position: sticky;
-        top: 0;
-        border-bottom: 2px solid #ddd;
       }
 
-      .offences-table td {
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .container {
         padding: 1rem;
-        border-bottom: 1px solid #eee;
-      }
-
-      .offences-table tr:hover {
-        background-color: #f9f9f9;
-      }
-
-      .status-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 500;
-      }
-
-      .status-pending {
-        background-color: #fff3e0;
-        color: #ef6c00;
-      }
-
-      .status-investigating {
-        background-color: #e3f2fd;
-        color: #1565c0;
-      }
-
-      .status-resolved {
-        background-color: #e8f5e9;
-        color: #2e7d32;
-      }
-
-      .action-buttons {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
-
-      .btn {
-        background-color: var(--primary-color);
-        color: var(--white);
-        border: none;
-        padding: 0.6rem 1rem;
-        border-radius: 4px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        font-size: 0.9rem;
-      }
-
-      .btn:hover {
-        background-color: var(--primary-dark);
-      }
-
-      .btn-secondary {
-        background-color: var(--secondary-color);
-      }
-
-      .btn-secondary:hover {
-        background-color: var(--secondary-dark);
-      }
-
-      .btn-danger {
-        background-color: var(--accent-color);
-      }
-
-      .btn-danger:hover {
-        background-color: #b71c1c;
-      }
-
-      .btn-small {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
       }
 
       .filters-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-        gap: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
       }
 
       .filter-group {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
+        flex-wrap: wrap;
       }
 
-      .filter-group select,
-      .filter-group input {
-        padding: 0.6rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-family: "Roboto", sans-serif;
-      }
-
-      .download-options {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid #eee;
-      }
-
-      /* Live Cameras */
       .cameras-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
+        grid-template-columns: 1fr;
       }
+    }
 
-      .camera-card {
-        border-radius: 6px;
-        overflow: hidden;
-        position: relative; /* creates stacking context */
-        height: 200px;
-        background-color: #000;
-        z-index: 1; /* prevents overlay overlap */
-      }
+    /* Django Template Tags Simulation */
+    .django-tag {
+      display: inline-block;
+      background-color: #f1f1f1;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      margin: 0 2px;
+      color: #d32f2f;
+    }
 
-      .camera-feed {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* fills card correctly */
-        display: block; /* removes inline-gap issues */
-        background-color: #000;
-      }
+    .modal {
+      display: none;
+      /* hide initially */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
 
-      {% comment %} .camera-info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 0.8rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }  {% endcomment %}
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
 
-      .camera-status {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-      }
-
-      .status-active {
-        background-color: #4caf50;
-      }
-
-      .status-inactive {
-        background-color: #f44336;
-      }
-
-      /* Map Container */
-      .map-container {
-        height: 300px;
-        background-color: #e0e0e0;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .map-placeholder {
-        text-align: center;
-        color: var(--light-text);
-      }
-
-      .map-placeholder i {
-        font-size: 3rem;
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-      }
-
-      .map-controls {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      /* Recent Dumps Grid */
-      .dumps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-      }
-
-      .dump-item {
-        border-radius: 4px;
-        overflow: hidden;
-        position: relative;
-        height: 150px;
-      }
-
-      .dump-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s;
-      }
-
-      .dump-item:hover img {
-        transform: scale(1.05);
-      }
-
-      .dump-info {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 0.5rem;
-        font-size: 0.8rem;
-      }
-
-      /* Footer */
-      .footer {
-        text-align: center;
-        padding: 1.5rem;
-        margin-top: 2rem;
-        border-top: 1px solid #ddd;
-        color: var(--light-text);
-        font-size: 0.9rem;
-      }
-
-      /* Responsive Design */
-      @media (max-width: 1024px) {
-        .dashboard-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .dashboard-header {
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .authority-welcome {
-          margin-right: 0;
-          width: 100%;
-        }
-
-        .stats-card {
-          width: 100%;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .navbar {
-          flex-direction: column;
-          gap: 1rem;
-          padding: 1rem;
-        }
-
-        .nav-links {
-          width: 100%;
-          justify-content: space-between;
-        }
-
-        .container {
-          padding: 1rem;
-        }
-
-        .filters-bar {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-
-        .filter-group {
-          flex-wrap: wrap;
-        }
-
-        .cameras-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      /* Django Template Tags Simulation */
-      .django-tag {
-        display: inline-block;
-        background-color: #f1f1f1;
-        padding: 2px 6px;
-        border-radius: 3px;
-        font-family: monospace;
-        font-size: 0.9rem;
-        margin: 0 2px;
-        color: #d32f2f;
-      }
-
-.modal {
-  display: none; /* hide initially */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.5);
-}
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  max-width: 800px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-.modal img, .modal video {
-  width: 100%;
-  margin-bottom: 15px;
-}
+    .modal img,
+    .modal video {
+      width: 100%;
+      margin-bottom: 15px;
+    }
 
 
 
-.modal img, .modal video {
-  max-width: 90%;
-  max-height: 90%;
-  margin: auto;
-  display: block;
-}
-.close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: white;
-  font-size: 30px;
-  cursor: pointer;
-}
+    .modal img,
+    .modal video {
+      max-width: 90%;
+      max-height: 90%;
+      margin: auto;
+      display: block;
+    }
 
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 30px;
+      cursor: pointer;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
 
-    </style>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""
-    />
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
-  </head>
-  <body>
-    <!-- Django Template Tag for CSRF Token -->
-    <!-- {% csrf_token %} -->
+<body>
+  <!-- Django Template Tag for CSRF Token -->
+  <!-- {% csrf_token %} -->
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-      <div class="logo">
-        <i class="fas fa-shield-alt logo-icon"></i>
-        <h1>Dump Surveillance AI - Authority Portal</h1>
-      </div>
-
-      <div class="nav-links">
-        <div class="authority-badge">
-          <i class="fas fa-user-shield"></i>
-          
-          <span>Authority User: <strong>{{ request.session.authority_user_name }}</strong></span>
-          
-        </div>
-
-        <a href="#"><i class="fas fa-info-circle"></i> About</a>
-        <a href="{% url 'auth_logout' %}" class="sign-out"
-          ><i class="fas fa-sign-out-alt"></i> Sign Out</a
-        >
-      </div>
-    </nav>
-
-    <!-- Main Content Container -->
-    <div class="container">
-      <!-- Dashboard Header -->
-      <div class="dashboard-header">
-        <div class="authority-welcome">
-          <h2>Authority Control Dashboard</h2>
-          <p>
-            Monitor illegal dumping activities, manage reports, and update legal
-            dumping locations.
-          </p>
-          <p>
-            <strong>Last updated:</strong> {{ last_updated|date:"M d, Y h:i A" }}
-            <strong>Active cameras:</strong> 1/15
-          </p>
-        </div>
-
-        <div class="stats-card">
-          <div class="number">48</div>
-          <div class="label">Pending Reports</div>
-        </div>
-
-        <div class="stats-card">
-          <div class="number">127</div>
-          <div class="label">Total This Month</div>
-        </div>
-      </div>
-
-      <!-- Dashboard Grid -->
-      <div class="dashboard-grid">
-        <!-- Offences Reports Card -->
-        <div class="card">
-          <div class="card-header">
-            <h3>
-              <i class="fas fa-clipboard-list card-icon"></i> CCTV detected
-              reports
-            </h3>
-            <span class="status-badge status-pending">12 New Today</span>
-          </div>
-
-          <!-- Filters and Sorting -->
-          <div class="filters-bar">
-            <div class="filter-group">
-              <select id="sort-by">
-                <option value="recent">Sort by: Most Recent</option>
-                <option value="oldest">Sort by: Oldest First</option>
-                <option value="location">Sort by: Location</option>
-              </select>
-
-              <input type="date" id="date-filter" value="2023-10-15" />
-
-              
-            </div>
-
-            <button class="btn btn-secondary">
-              <i class="fas fa-sync-alt"></i> Refresh
-            </button>
-          </div>
-
-          <!-- Offences Table -->
-          <div class="offences-container">
-            <table class="offences-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Date & Time</th>
-                  <th>Location</th>
-                  <th>Evidence</th>
-                  <th>Download</th>
-                </tr>
-              </thead>
-              <tbody>
-{% for event in cctv_events %}
-<tr data-timestamp="{{ event.timestamp|date:'Y-m-d H:i:s' }}" data-location="{{ event.illegal_location|default:'Unknown location' }}">
-  <td>{{ forloop.counter }}</td>
-  <td>{{ event.timestamp|date:"Y-m-d H:i" }}</td>
-  <td>{{ event.illegal_location|default:"Unknown location" }}</td>
-  <td>
-    <div class="action-buttons">
-      <button class="btn btn-small" onclick="viewCCTVEvent('{{ event.id }}')">
-        <i class="fas fa-eye"></i> View
-      </button>
-      
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-shield-alt logo-icon"></i>
+      <h1>Dump Surveillance AI - Authority Portal</h1>
     </div>
-  </td>
-  <td>
-    <a class="btn btn-secondary btn-small" href="{{ event.dumping_video.url }}" download>
-        <i class="fas fa-download"></i> Download
-      </a>
-  </td>
-</tr>
-{% empty %}
-<tr>
-  <td colspan="5" style="text-align:center;">No CCTV detected events yet</td>
-</tr>
-{% endfor %}
 
+    <div class="nav-links">
+      <div class="authority-badge">
+        <i class="fas fa-user-shield"></i>
 
-</tbody>
+        <span>Authority User: <strong>{{ request.session.authority_user_name }}</strong></span>
 
-            </table>
-          </div>
+      </div>
 
-          <!-- Download Options -->
-          <div class="download-options">
-            <button class="btn btn-secondary" onclick="downloadDailyReport()">
-              <i class="fas fa-calendar-day"></i> Download Today's Reports
-            </button>
-            <button class="btn" onclick="downloadAllReports()">
-              <i class="fas fa-download"></i> Download All Filtered Reports
-            </button>
-          </div>
+      <a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a>
+      <a href="{% url 'auth_logout' %}" class="sign-out"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="authority-welcome">
+        <h2>Authority Control Dashboard</h2>
+        <p>
+          Monitor illegal dumping activities, manage reports, and update legal
+          dumping locations.
+        </p>
+        <p>
+          <strong>Last updated:</strong> {{ last_updated|date:"M d, Y h:i A" }}
+          <strong>Active cameras:</strong> 1/15
+        </p>
+      </div>
+
+      <div class="stats-card">
+        <div class="number">48</div>
+        <div class="label">Pending Reports</div>
+      </div>
+
+      <div class="stats-card">
+        <div class="number">127</div>
+        <div class="label">Total This Month</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Offences Reports Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            <i class="fas fa-clipboard-list card-icon"></i> CCTV detected
+            reports
+          </h3>
+          <span class="status-badge status-pending">12 New Today</span>
         </div>
-        <!-- User Reported Dumping Events -->
-        <div class="card">
-          <div class="card-header">
-            <h3>
-              <i class="fas fa-user card-icon"></i> User Reported Dumping Events
-            </h3>
-            <span class="status-badge status-pending">Citizen Reports</span>
-          </div>
 
-          <p>
-            Dumping incidents reported directly by citizens using mobile phones.
-          </p>
+        <!-- Filters and Sorting -->
+        <div class="filters-bar">
+          <div class="filter-group">
+            <select id="sort-by">
+              <option value="recent">Sort by: Most Recent</option>
+              <option value="oldest">Sort by: Oldest First</option>
+              <option value="location">Sort by: Location</option>
+            </select>
 
-          <div class="offences-container">
-            <table class="offences-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Reported At</th>
-      <th>Location</th>
-      <th>Media</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for report in reports %}
-      <tr>
-        <td>#USR-{{ report.id }}</td>
-        <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
-        <td>{{ report.location }}</td>
+            <input type="date" id="date-filter" value="2023-10-15" />
 
-        <!-- Media column -->
-        <td>
-          {% if report.evidences.all %}
-            {% for ev in report.evidences.all %}
-              <a href="{{ ev.file.url }}" target="_blank">
-                <img src="{{ ev.file.url }}" width="50" style="margin-right:5px; border:1px solid #ccc;"/>
-              </a>
-            {% endfor %}
-          {% else %}
-            —
-          {% endif %}
-        </td>
-
-        <!-- Actions column -->
-        <td>
-          <a class="btn btn-secondary btn-small"
-             href="{% url 'download_report_zip' report.id %}">
-            ⬇️ Download ZIP
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
 
           </div>
 
-        
+          <button class="btn btn-secondary">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+
+        <!-- Offences Table -->
+        <div class="offences-container">
+          <table class="offences-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Date & Time</th>
+                <th>Location</th>
+                <th>Evidence</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for event in cctv_events %}
+              <tr data-timestamp="{{ event.timestamp|date:'Y-m-d H:i:s' }}"
+                data-location="{{ event.illegal_location|default:'Unknown location' }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ event.timestamp|date:"Y-m-d H:i" }}</td>
+                <td>{{ event.illegal_location|default:"Unknown location" }}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn btn-small" onclick="viewCCTVEvent('{{ event.id }}')">
+                      <i class="fas fa-eye"></i> View
+                    </button>
+
+                  </div>
+                </td>
+                <td>
+                  <a class="btn btn-secondary btn-small" href="{{ event.dumping_video.url }}" download>
+                    <i class="fas fa-download"></i> Download
+                  </a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" style="text-align:center;">No CCTV detected events yet</td>
+              </tr>
+              {% endfor %}
 
 
-       
+            </tbody>
+
+          </table>
+        </div>
+
+        <!-- Download Options -->
+        <div class="download-options">
+          <button class="btn btn-secondary" onclick="downloadDailyReport()">
+            <i class="fas fa-calendar-day"></i> Download Today's Reports
+          </button>
+          <button class="btn" onclick="downloadAllReports()">
+            <i class="fas fa-download"></i> Download All Filtered Reports
+          </button>
+        </div>
+      </div>
+      <!-- User Reported Dumping Events -->
+      <div class="card">
+        <div class="card-header">
+          <h3>
+            <i class="fas fa-user card-icon"></i> User Reported Dumping Events
+          </h3>
+          <span class="status-badge status-pending">Citizen Reports</span>
+        </div>
+
+        <p>
+          Dumping incidents reported directly by citizens using mobile phones.
+        </p>
+
+        <div class="offences-container">
+          <table class="offences-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Reported At</th>
+                <th>Location</th>
+                <th>Media</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for report in reports %}
+              <tr>
+                <td>#USR-{{ report.id }}</td>
+                <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ report.location }}</td>
+
+                <!-- Media column -->
+                <td>
+                  {% if report.evidences.all %}
+                  {% for ev in report.evidences.all %}
+                  <a href="{{ ev.file.url }}" target="_blank">
+                    <img src="{{ ev.file.url }}" width="50" style="margin-right:5px; border:1px solid #ccc;" />
+                  </a>
+                  {% endfor %}
+                  {% else %}
+                  —
+                  {% endif %}
+                </td>
+
+                <!-- Actions column -->
+                <td>
+                  <a class="btn btn-secondary btn-small" href="{% url 'download_report_zip' report.id %}">
+                    ⬇️ Download ZIP
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+
+
+
+
+
 
         <!-- Live Cameras Card -->
         <div class="card">
@@ -814,14 +809,10 @@
 
           <div class="cameras-grid">
             <div class="camera-card">
-              <img
-                src="/camera/live/05/"
-                class="camera-feed"
-                alt="Live CCTV Feed"
-              />
+              <img src="/camera/live/05/" class="camera-feed" alt="Live CCTV Feed" />
             </div>
             <div class="camera-info">
-              
+
               <div>
                 <strong>Camera #05</strong><br />
                 <small>Location - MG Road, Kochi</small>
@@ -831,21 +822,15 @@
           </div>
 
           <div class="camera-card">
-            <div
-              class="camera-feed"
-              style="
+            <div class="camera-feed" style="
                 background-color: #555;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
-              "
-            >
+              ">
               <div style="text-align: center">
-                <i
-                  class="fas fa-video"
-                  style="font-size: 2rem; margin-bottom: 0.5rem"
-                ></i>
+                <i class="fas fa-video" style="font-size: 2rem; margin-bottom: 0.5rem"></i>
                 <p>Live Feed</p>
               </div>
             </div>
@@ -888,10 +873,7 @@
         </p>
 
         <div class="map-container" style="height: 400px">
-          <div
-            id="map"
-            style="width: 100%; height: 100%; border-radius: 4px"
-          ></div>
+          <div id="map" style="width: 100%; height: 100%; border-radius: 4px"></div>
         </div>
 
         <div class="map-controls">
@@ -907,59 +889,38 @@
             </button>
           </div>
           <div>
-            <span
-              id="selectedCoords"
-              style="font-size: 0.9rem; color: var(--light-text)"
-            ></span>
+            <span id="selectedCoords" style="font-size: 0.9rem; color: var(--light-text)"></span>
           </div>
         </div>
 
         <!-- Location Form (hidden by default) -->
-        <div
-          id="locationForm"
-          style="
+        <div id="locationForm" style="
             display: none;
             margin-top: 1rem;
             padding: 1rem;
             background-color: #f9f9f9;
             border-radius: 4px;
-          "
-        >
+          ">
           <h4 style="margin-bottom: 1rem">Location Details</h4>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
             <div>
-              <label
-                for="locationName"
-                style="display: block; margin-bottom: 0.5rem; font-weight: 500"
-                >Location Name</label
-              >
-              <input
-                type="text"
-                id="locationName"
-                placeholder="e.g., Downtown Recycling Center"
-                style="
+              <label for="locationName" style="display: block; margin-bottom: 0.5rem; font-weight: 500">Location
+                Name</label>
+              <input type="text" id="locationName" placeholder="e.g., Downtown Recycling Center" style="
                   width: 100%;
                   padding: 0.6rem;
                   border: 1px solid #ddd;
                   border-radius: 4px;
-                "
-              />
+                " />
             </div>
             <div>
-              <label
-                for="locationType"
-                style="display: block; margin-bottom: 0.5rem; font-weight: 500"
-                >Type</label
-              >
-              <select
-                id="locationType"
-                style="
+              <label for="locationType" style="display: block; margin-bottom: 0.5rem; font-weight: 500">Type</label>
+              <select id="locationType" style="
                   width: 100%;
                   padding: 0.6rem;
                   border: 1px solid #ddd;
                   border-radius: 4px;
-                "
-              >
+                ">
                 <option value="bin">Garbage Bin</option>
                 <option value="recycling">Recycling Center</option>
                 <option value="transfer">Transfer Station</option>
@@ -977,9 +938,7 @@
           </div>
         </div>
 
-        <div
-          style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text)"
-        >
+        <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text)">
           <p>
             <i class="fas fa-info-circle"></i>
             <span id="locationCount">Loading locations...</span>
@@ -993,8 +952,8 @@
           <h3>
             <i class="fas fa-camera card-icon"></i> Detection analytics
           </h3>
-          
-          
+
+
         </div>
 
         <p>
@@ -1007,8 +966,7 @@
           <div class="dump-item">
             <img
               src="https://images.unsplash.com/photo-1589652717521-10c0d092dea9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-              alt="Illegal dump site"
-            />
+              alt="Illegal dump site" />
             <div class="dump-info">
               <strong>Downtown Area</strong><br />
               Detected: 2 hours ago<br />
@@ -1019,8 +977,7 @@
           <div class="dump-item">
             <img
               src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-              alt="Illegal dump site"
-            />
+              alt="Illegal dump site" />
             <div class="dump-info">
               <strong>Industrial Zone</strong><br />
               Detected: 5 hours ago<br />
@@ -1031,8 +988,7 @@
           <div class="dump-item">
             <img
               src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-              alt="Illegal dump site"
-            />
+              alt="Illegal dump site" />
             <div class="dump-info">
               <strong>Riverside</strong><br />
               Detected: 8 hours ago<br />
@@ -1043,8 +999,7 @@
           <div class="dump-item">
             <img
               src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-              alt="Illegal dump site"
-            />
+              alt="Illegal dump site" />
             <div class="dump-info">
               <strong>Forest Road</strong><br />
               Detected: 12 hours ago<br />
@@ -1063,9 +1018,9 @@
       </div>
     </div>
     <div id="mediaModal" class="modal">
-  <span class="close" onclick="closeMediaModal()">&times;</span>
-  <div id="modalContent"></div>
-</div>
+      <span class="close" onclick="closeMediaModal()">&times;</span>
+      <div id="modalContent"></div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1535,9 +1490,8 @@
 
         // Show coordinates
         const latLng = marker.getLatLng();
-        document.getElementById("selectedCoords").innerHTML = `Selected: ${
-          marker.locationData.name
-        } (Lat ${latLng.lat.toFixed(6)}, Lng ${latLng.lng.toFixed(6)})`;
+        document.getElementById("selectedCoords").innerHTML = `Selected: ${marker.locationData.name
+          } (Lat ${latLng.lat.toFixed(6)}, Lng ${latLng.lng.toFixed(6)})`;
 
         // Enable delete button
         document.getElementById("deleteLocationBtn").disabled = false;
@@ -1600,21 +1554,21 @@
       // Map interaction simulation
       const mapContainer = document.querySelector(".map-container");
       function loadUserReports() {
-  fetch("/authority/user-reports/")
-    .then(res => res.json())
-    .then(reports => {
-      const tbody = document.getElementById("userReportsTable");
-      tbody.innerHTML = "";
+        fetch("/authority/user-reports/")
+          .then(res => res.json())
+          .then(reports => {
+            const tbody = document.getElementById("userReportsTable");
+            tbody.innerHTML = "";
 
-      reports.forEach(r => {
-        const mediaIcons = r.media.length
-          ? r.media.map(url =>
-              `<img src="${url}" width="40"
+            reports.forEach(r => {
+              const mediaIcons = r.media.length
+                ? r.media.map(url =>
+                  `<img src="${url}" width="40"
                 style="cursor:pointer;margin-right:5px"
                 onclick="openMedia('${url}')">`
-            ).join("")
-          : "—";
-        tbody.innerHTML += `
+                ).join("")
+                : "—";
+              tbody.innerHTML += `
   <tr>
     <td>#USR-${r.id}</td>
     <td>${r.reported_at}</td>
@@ -1634,104 +1588,104 @@
   </tr>
 `;
 
-      });
-    })
-    .catch(err => console.error("User reports load error:", err));
-}
-
-document.addEventListener("DOMContentLoaded", loadUserReports);
-
-  
-
-
-
-
-function openMedia(url) {
-  const modal = document.getElementById("mediaModal");
-  const container = document.getElementById("modalContent");
-
-  container.innerHTML = "";
-
-  if (url.match(/\.(mp4|webm|ogg)$/i)) {
-    const video = document.createElement("video");
-    video.src = url;
-    video.controls = true;
-    video.autoplay = true;
-    container.appendChild(video);
-  } else {
-    const img = document.createElement("img");
-    img.src = url;
-    container.appendChild(img);
-  }
-
-  modal.style.display = "flex";
-}
-
-
-    
-
-
-
-
-
-function viewUserReport(reportId) {
-  fetch(`/authority/user-report/${reportId}/media/`)
-    .then(res => res.json())
-    .then(data => {
-      console.log("MEDIA RESPONSE:", data);
-
-      const container = document.getElementById("modalContent");
-      container.innerHTML = "";
-
-      if (!data.files || data.files.length === 0) {
-        container.innerHTML = "<p>No evidence uploaded.</p>";
+            });
+          })
+          .catch(err => console.error("User reports load error:", err));
       }
 
-      data.files.forEach(f => {
-        if (f.type === "image") {
-          const img = document.createElement("img");
-          img.src = f.url;
-          container.appendChild(img);
-        } else {
+      document.addEventListener("DOMContentLoaded", loadUserReports);
+
+
+
+
+
+
+      function openMedia(url) {
+        const modal = document.getElementById("mediaModal");
+        const container = document.getElementById("modalContent");
+
+        container.innerHTML = "";
+
+        if (url.match(/\.(mp4|webm|ogg)$/i)) {
           const video = document.createElement("video");
+          video.src = url;
           video.controls = true;
-          video.src = f.url;
+          video.autoplay = true;
           container.appendChild(video);
+        } else {
+          const img = document.createElement("img");
+          img.src = url;
+          container.appendChild(img);
         }
-      });
 
-      document.getElementById("mediaModal").style.display = "flex";
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Failed to load evidence");
-    });
-}
+        modal.style.display = "flex";
+      }
 
-function closeMediaModal() {
-  const modal = document.getElementById("mediaModal");
-  const content = document.getElementById("modalContent");
 
-  modal.style.display = "none";
-  content.innerHTML = "";
-}
 
-       fetch("/authority/cctv-events/")
-  .then(res => res.json())
-  .then(events => {
-    const grid = document.getElementById("cctvGrid");
-    grid.innerHTML = "";
 
-    events.forEach(ev => {
-      const plateImg = ev.plate_image
-        ? `/media/${ev.plate_image}`
-        : "/static/no-plate.png";
 
-      const confidence = ev.confidence
-        ? (ev.confidence * 100).toFixed(1) + "%"
-        : "N/A";
 
-      grid.innerHTML += `
+
+
+      function viewUserReport(reportId) {
+        fetch(`/authority/user-report/${reportId}/media/`)
+          .then(res => res.json())
+          .then(data => {
+            console.log("MEDIA RESPONSE:", data);
+
+            const container = document.getElementById("modalContent");
+            container.innerHTML = "";
+
+            if (!data.files || data.files.length === 0) {
+              container.innerHTML = "<p>No evidence uploaded.</p>";
+            }
+
+            data.files.forEach(f => {
+              if (f.type === "image") {
+                const img = document.createElement("img");
+                img.src = f.url;
+                container.appendChild(img);
+              } else {
+                const video = document.createElement("video");
+                video.controls = true;
+                video.src = f.url;
+                container.appendChild(video);
+              }
+            });
+
+            document.getElementById("mediaModal").style.display = "flex";
+          })
+          .catch(err => {
+            console.error(err);
+            alert("Failed to load evidence");
+          });
+      }
+
+      function closeMediaModal() {
+        const modal = document.getElementById("mediaModal");
+        const content = document.getElementById("modalContent");
+
+        modal.style.display = "none";
+        content.innerHTML = "";
+      }
+
+      fetch("/authority/cctv-events/")
+        .then(res => res.json())
+        .then(events => {
+          const grid = document.getElementById("cctvGrid");
+          grid.innerHTML = "";
+
+          events.forEach(ev => {
+            const plateImg = ev.plate_image
+              ? `/media/${ev.plate_image}`
+              : "/static/no-plate.png";
+
+            const confidence = ev.confidence
+              ? (ev.confidence * 100).toFixed(1) + "%"
+              : "N/A";
+
+            grid.innerHTML += `
         <div class="dump-item">
           <img src="${plateImg}" alt="Detected Vehicle">
 
@@ -1743,79 +1697,119 @@ function closeMediaModal() {
           </div>
         </div>
       `;
-    });
-  })
-  .catch(err => console.error("CCTV load error:", err));
-  
+          });
+        })
+        .catch(err => console.error("CCTV load error:", err));
 
-function viewCCTVEvent(eventId) {
-  fetch(`/authority/cctv-event/${eventId}/`)
-    .then(res => res.json())
-    .then(data => {
-      const container = document.getElementById("modalContent");
-      container.innerHTML = "";
 
-      const video = document.createElement("video");
-      video.src = data.video_url;
-      video.controls = true;
-      video.autoplay = true;
 
-      container.appendChild(video);
-      document.getElementById("mediaModal").style.display = "flex";
-    });
-}
+      // CCTV Events Logic
+      const apiCctvTableBody = document.querySelector(".offences-table tbody");
+      const apiSortSelect = document.getElementById("sort-by");
+      const apiDateFilter = document.getElementById("date-filter");
+      const apiRefreshBtn = document.querySelector(".filters-bar .btn-secondary"); // Refresh button
 
-const tableBody = document.querySelector(".offences-table tbody");
+      function loadCCTVEvents() {
+        const sortBy = apiSortSelect.value;
+        const date = apiDateFilter.value;
 
-function sortAndFilterTable() {
-  const sortBy = sortSelect.value;
-  const selectedDate = dateFilter.value;
-  const status = statusFilter.value;
 
-  // Get all rows as array
-  let rows = Array.from(tableBody.querySelectorAll("tr"));
+        // Construct URL
+        let url = `/authority/cctv-events/?sort=${sortBy}`;
+        if (date) url += `&date=${date}`;
 
-  // Remove empty row if exists
-  rows = rows.filter(row => !row.classList.contains('empty-row'));
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            apiCctvTableBody.innerHTML = "";
 
-  // Filter by date
-  if (selectedDate) {
-    rows = rows.filter(row => {
-      const rowDate = row.dataset.timestamp.split(" ")[0]; // 'YYYY-MM-DD'
-      return rowDate === selectedDate;
-    });
-  }
+            if (data.events.length === 0) {
+              apiCctvTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No CCTV detected events found</td></tr>`;
+              return;
+            }
 
-  // Filter by status
-  if (status !== "all") {
-    rows = rows.filter(row => row.dataset.status === status);
-  }
+            data.events.forEach((event, index) => {
+              const row = document.createElement("tr");
 
-  // Sort
-  if (sortBy === "recent") {
-    rows.sort((a, b) => new Date(b.dataset.timestamp) - new Date(a.dataset.timestamp));
-  } else if (sortBy === "oldest") {
-    rows.sort((a, b) => new Date(a.dataset.timestamp) - new Date(b.dataset.timestamp));
-  } else if (sortBy === "location") {
-    rows.sort((a, b) => a.dataset.location.localeCompare(b.dataset.location));
-  }
+              // Construct plate image HTML if available
+              // const plateThumb = event.plate_image ? `<img src="${event.plate_image}" height="30" style="margin-left:5px; vertical-align:middle;">` : "";
 
-  // Re-append rows
-  tableBody.innerHTML = "";
-  if (rows.length === 0) {
-    tableBody.innerHTML = `<tr class="empty-row"><td colspan="6" style="text-align:center;">No CCTV detected events yet</td></tr>`;
-  } else {
-    rows.forEach(r => tableBody.appendChild(r));
-  }
-}
+              row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${event.timestamp}</td>
+                <td>${event.location || 'Unknown'}</td>
+                <td>
+                   <div class="action-buttons">
+                     <button class="btn btn-small" onclick="viewCCTVEvent('${event.id}')">
+                       <i class="fas fa-eye"></i> View
+                     </button>
+                   </div>
+                </td>
+                <td>
+                    ${event.video_url ?
+                  `<a class="btn btn-secondary btn-small" href="${event.video_url}" download>
+                        <i class="fas fa-download"></i> Download
+                    </a>` : 'No Video'}
+                </td>
+             `;
+              apiCctvTableBody.appendChild(row);
+            });
+          })
+          .catch(err => {
+            console.error("Error loading CCTV events:", err);
+            apiCctvTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error loading data</td></tr>`;
+          });
+      }
 
-// Add event listeners
-sortSelect.addEventListener("change", sortAndFilterTable);
-dateFilter.addEventListener("change", sortAndFilterTable);
-statusFilter.addEventListener("change", sortAndFilterTable);
+      function downloadFilteredReport() {
+        const sortBy = apiSortSelect.value;
+        const date = apiDateFilter.value;
+        let url = `/authority/cctv-events/?export=csv&sort=${sortBy}`;
+        if (date) url += `&date=${date}`;
+        window.location.href = url;
+      }
 
-// Initial sort
-sortAndFilterTable();
+      function downloadDailyReport() {
+        const today = new Date().toISOString().split('T')[0];
+        let url = `/authority/cctv-events/?export=csv&date=${today}`;
+        window.location.href = url;
+      }
+
+
+      // Event Listeners
+      apiSortSelect.addEventListener("change", loadCCTVEvents);
+      apiDateFilter.addEventListener("change", loadCCTVEvents);
+      if (apiRefreshBtn) apiRefreshBtn.addEventListener("click", loadCCTVEvents);
+
+      // Expose functions to global scope for onclick attributes
+      window.downloadFilteredReport = downloadFilteredReport;
+      window.downloadDailyReport = downloadDailyReport;
+      window.viewCCTVEvent = viewCCTVEvent;
+
+      // Initial Load
+      // Set date filter to empty by default or today? User dashboard had a static value in HTML "2023-10-15".
+      // Let's clear it or set it to today if preferred, but for now just load defaults.
+      loadCCTVEvents();
+
+      // Clean up old legacy code block
+      function viewCCTVEvent(eventId) {
+        fetch(`/authority/cctv-event/${eventId}/`)
+          .then(res => res.json())
+          .then(data => {
+            const container = document.getElementById("modalContent");
+            container.innerHTML = "";
+
+            const video = document.createElement("video");
+            video.src = data.video_url;
+            video.controls = true;
+            video.autoplay = true;
+            // video.style.width = "100%";
+
+            container.appendChild(video);
+            document.getElementById("mediaModal").style.display = "flex";
+          });
+      }
+
 
 
 
@@ -1823,5 +1817,6 @@ sortAndFilterTable();
 
 
 
-  </body>
+</body>
+
 </html>

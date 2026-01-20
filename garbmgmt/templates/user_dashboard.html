@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dump Surveillance AI - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-color: #2e7d32;
@@ -20,25 +23,28 @@
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Roboto', sans-serif;
             color: var(--dark-text);
             background-color: var(--light-bg);
             line-height: 1.6;
         }
-        
-        h1, h2, h3, h4 {
+
+        h1,
+        h2,
+        h3,
+        h4 {
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
         }
-        
+
         /* Navbar Styles */
         .navbar {
             background-color: var(--white);
@@ -51,29 +57,29 @@
             top: 0;
             z-index: 1000;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .logo-icon {
             color: var(--primary-color);
             font-size: 1.8rem;
         }
-        
+
         .logo h1 {
             font-size: 1.5rem;
             color: var(--primary-dark);
         }
-        
+
         .nav-links {
             display: flex;
             gap: 1.5rem;
             align-items: center;
         }
-        
+
         .nav-links a {
             text-decoration: none;
             color: var(--dark-text);
@@ -83,19 +89,19 @@
             align-items: center;
             gap: 5px;
         }
-        
+
         .nav-links a:hover {
             color: var(--primary-color);
         }
-        
+
         .nav-links .sign-out {
             color: #d32f2f;
         }
-        
+
         .nav-links .sign-out:hover {
             color: #b71c1c;
         }
-        
+
         .user-info {
             display: flex;
             align-items: center;
@@ -104,18 +110,18 @@
             padding: 8px 15px;
             border-radius: 20px;
         }
-        
+
         .user-info i {
             color: var(--primary-color);
         }
-        
+
         /* Main Content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
-        
+
         .welcome-section {
             background: linear-gradient(to right, var(--primary-color), var(--primary-light));
             color: var(--white);
@@ -124,18 +130,18 @@
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
         }
-        
+
         .welcome-section h2 {
             margin-bottom: 0.5rem;
         }
-        
+
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
-        
+
         .card {
             background-color: var(--white);
             border-radius: var(--border-radius);
@@ -143,11 +149,11 @@
             padding: 1.5rem;
             transition: transform 0.3s;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
         }
-        
+
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -156,19 +162,19 @@
             padding-bottom: 0.8rem;
             border-bottom: 1px solid #eee;
         }
-        
+
         .card-header h3 {
             color: var(--primary-dark);
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .card-icon {
             font-size: 1.5rem;
             color: var(--primary-color);
         }
-        
+
         /* Report Offence Form */
         .report-form input,
         .report-form textarea,
@@ -180,12 +186,12 @@
             border-radius: 4px;
             font-family: 'Roboto', sans-serif;
         }
-        
+
         .report-form textarea {
             height: 120px;
             resize: vertical;
         }
-        
+
         .upload-area {
             border: 2px dashed #ccc;
             border-radius: 4px;
@@ -195,17 +201,17 @@
             cursor: pointer;
             transition: border-color 0.3s;
         }
-        
+
         .upload-area:hover {
             border-color: var(--primary-color);
         }
-        
+
         .upload-area i {
             font-size: 2rem;
             color: var(--primary-color);
             margin-bottom: 0.5rem;
         }
-        
+
         .btn {
             background-color: var(--primary-color);
             color: var(--white);
@@ -221,19 +227,19 @@
             gap: 8px;
             width: 100%;
         }
-        
+
         .btn:hover {
             background-color: var(--primary-dark);
         }
-        
+
         .btn-secondary {
             background-color: var(--secondary-color);
         }
-        
+
         .btn-secondary:hover {
             background-color: var(--secondary-dark);
         }
-        
+
         /* Map Container */
         .map-container {
             height: 300px;
@@ -246,25 +252,25 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .map-placeholder {
             text-align: center;
             color: var(--light-text);
         }
-        
+
         .map-placeholder i {
             font-size: 3rem;
             color: var(--primary-color);
             margin-bottom: 1rem;
         }
-        
+
         /* Chatbot */
         .chatbot-container {
             height: 300px;
             display: flex;
             flex-direction: column;
         }
-        
+
         .chat-messages {
             flex-grow: 1;
             overflow-y: auto;
@@ -273,19 +279,19 @@
             border-radius: 4px;
             margin-bottom: 1rem;
         }
-        
+
         .message {
             margin-bottom: 1rem;
             max-width: 80%;
         }
-        
+
         .bot-message {
             background-color: #e8f5e9;
             padding: 0.8rem;
             border-radius: 10px 10px 10px 0;
             align-self: flex-start;
         }
-        
+
         .user-message {
             background-color: var(--primary-light);
             color: white;
@@ -293,19 +299,19 @@
             border-radius: 10px 10px 0 10px;
             margin-left: auto;
         }
-        
+
         .chat-input {
             display: flex;
             gap: 10px;
         }
-        
+
         .chat-input input {
             flex-grow: 1;
             padding: 0.8rem;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        
+
         .chat-input button {
             background-color: var(--primary-color);
             color: white;
@@ -314,7 +320,7 @@
             width: 50px;
             cursor: pointer;
         }
-        
+
         /* Recent Dumps Grid */
         .dumps-grid {
             display: grid;
@@ -322,25 +328,25 @@
             gap: 1rem;
             margin-top: 1rem;
         }
-        
+
         .dump-item {
             border-radius: 4px;
             overflow: hidden;
             position: relative;
             height: 150px;
         }
-        
+
         .dump-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s;
         }
-        
+
         .dump-item:hover img {
             transform: scale(1.05);
         }
-        
+
         .dump-info {
             position: absolute;
             bottom: 0;
@@ -351,23 +357,29 @@
             padding: 0.5rem;
             font-size: 0.8rem;
         }
-        
+
         .footer-container {
-    width: 100%;
-    background-color: #fff; /* optional */
+            width: 100%;
+            background-color: #fff;
+            /* optional */
         }
 
         .footer {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 1.5rem;
-    border-top: 1px solid #ddd;
-    color: var(--light-text);
-    font-size: 0.9rem;
-    }
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid #ddd;
+            color: var(--light-text);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
 
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .navbar {
@@ -375,21 +387,21 @@
                 gap: 1rem;
                 padding: 1rem;
             }
-            
+
             .nav-links {
                 width: 100%;
                 justify-content: space-between;
             }
-            
+
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .container {
                 padding: 1rem;
             }
         }
-        
+
         /* Django Template Tags Simulation */
         .django-tag {
             display: inline-block;
@@ -403,35 +415,33 @@
         }
     </style>
 
-    <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
     </script>
 
 </head>
+
 <body>
     <!-- Django Template Tag for CSRF Token -->
-      
-    
+
+
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="logo">
             <i class="fas fa-trash-alt logo-icon"></i>
             <h1>Dump Surveillance AI</h1>
         </div>
-        
+
         <div class="nav-links">
+            <a href="{% url 'about' %}"><i class="fas fa-info-circle"></i> About</a>
             <div class="user-info">
                 <i class="fas fa-user-circle"></i>
                 <!-- Django Template Tag for Username -->
                 <span>Welcome, <strong>{{ request.session.normal_user_name }}</strong> </span>
 
             </div>
-            
-            
+
+
             <a href="{% url 'user_logout' %}" class="sign-out"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
         </div>
     </nav>
@@ -442,9 +452,10 @@
         <section class="welcome-section">
             <h2>Welcome to Dump Surveillance AI Dashboard</h2>
             <p>Help us combat illegal garbage dumping and improve waste management in our community.</p>
-            <p>Today's report: <strong>24</strong> illegal dumps detected | <strong>15</strong> offences reported by users</p>
+            <p>Today's report: <strong>24</strong> illegal dumps detected | <strong>15</strong> offences reported by
+                users</p>
         </section>
-        
+
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             <!-- Report Offence Card -->
@@ -452,231 +463,237 @@
                 <div class="card-header">
                     <h3><i class="fas fa-exclamation-triangle card-icon"></i> Report Illegal Dumping</h3>
                 </div>
-                
+
                 <form class="report-form" method="post" enctype="multipart/form-data">
                     <!-- Django Form Template Tags would go here -->
                     <!-- {{ form.as_p }} -->
-                    
+
                     <input type="text" name="location" placeholder="Location of dumping" required>
-                    
-                    <textarea name="description" placeholder="Describe the incident (time, vehicles involved, etc.)" required></textarea>
-                    
+
+                    <textarea name="description" placeholder="Describe the incident (time, vehicles involved, etc.)"
+                        required></textarea>
+
                     <select name="severity" required>
                         <option value="" disabled selected>Select severity level</option>
                         <option value="low">Low - Small amount of waste</option>
                         <option value="medium">Medium - Moderate dumping</option>
                         <option value="high">High - Large scale illegal dumping</option>
                     </select>
-                    
+
                     <div class="upload-area" onclick="document.getElementById('file-upload').click()">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Click to upload evidence (images/videos)</p>
                         <input type="file" id="file-upload" name="evidence" accept="image/*,video/*" hidden multiple>
                     </div>
-                    
+
                     <button type="submit" class="btn">
                         <i class="fas fa-paper-plane"></i> Submit Report
                     </button>
                 </form>
             </div>
-            
+
             <!-- Legal Dumping Locations Card -->
             <div class="card">
                 <div class="card-header">
                     <h3><i class="fas fa-map-marker-alt card-icon"></i> Legal Dumping Locations</h3>
                     <i class="fas fa-search"></i>
                 </div>
-                
+
                 <p>Find authorized garbage bins and recycling centers near you:</p>
-                
+
                 <div id="userMap" class="map-container"></div>
 
-                
+
                 <button class="btn btn-secondary" onclick="useMyLocation()">
-                <i class="fas fa-location-arrow"></i> Use My Location
+                    <i class="fas fa-location-arrow"></i> Use My Location
                 </button>
 
             </div>
-            
+
             <!-- Waste Management Chatbot Card -->
-<div class="card">
-    <div class="card-header">
-        <h3><i class="fas fa-robot card-icon"></i> Waste Management Assistant</h3>
-    </div>
-    
-    <div class="chatbot-container">
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-robot card-icon"></i> Waste Management Assistant</h3>
+                </div>
 
-        <!-- CHAT MESSAGES -->
-        <div class="chat-messages">
-            <div class="message bot-message">
-                Hello! I'm your Waste Management Assistant. How can I help you today?
+                <div class="chatbot-container">
+
+                    <!-- CHAT MESSAGES -->
+                    <div class="chat-messages">
+                        <div class="message bot-message">
+                            Hello! I'm your Waste Management Assistant. How can I help you today?
+                        </div>
+                    </div>
+
+                    <!-- CHAT INPUT -->
+                    <div class="chat-input">
+
+                        <input type="text" placeholder="Ask about waste management...">
+                        <button><i class="fas fa-paper-plane"></i></button>
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text);">
+                    <p><i class="fas fa-lightbulb"></i>
+                        <strong>Try asking:</strong>
+                        "Where can I dispose of electronic waste?" or "What is the penalty for illegal dumping?"
+                    </p>
+                </div>
             </div>
+
+
+
+
+
+        </div>
+        <!-- Footer -->
+        <div class="footer-container"
+            style="display: flex; justify-content: center; width: 100%; background-color: #fff; margin-top: 2rem;">
+            <footer class="footer"
+                style="width: 100%; max-width: 1200px; text-align: center; padding: 1.5rem; border-top: 1px solid #ddd; color: var(--light-text); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;">
+                <p>Dump Surveillance AI &copy; 2026. Combating illegal dumping through technology and community
+                    participation.</p>
+                <p><i class="fas fa-envelope"></i> info@dumpsurveillance.ai</p>
+            </footer>
         </div>
 
-        <!-- CHAT INPUT -->
-        <div class="chat-input">
-           
-            <input type="text" placeholder="Ask about waste management...">
-            <button><i class="fas fa-paper-plane"></i></button>
-        </div>
 
-    </div>
-    
-    <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--light-text);">
-        <p><i class="fas fa-lightbulb"></i> 
-            <strong>Try asking:</strong> 
-            "Where can I dispose of electronic waste?" or "What is the penalty for illegal dumping?"
-        </p>
-    </div>
-</div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
 
-        
-       
-                  
-    
-<!-- Footer -->
-<div class="footer-container">
-    <footer class="footer">
-        <p>Dump Surveillance AI &copy; 2026. Combating illegal dumping through technology and community participation.</p>
-        <p><i class="fas fa-envelope"></i> info@dumpsurveillance.ai</p>
-    </footer>
-</div>
+                /* ================= CSRF ================= */
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== "") {
+                        const cookies = document.cookie.split(";");
+                        for (let cookie of cookies) {
+                            cookie = cookie.trim();
+                            if (cookie.startsWith(name + "=")) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                const csrftoken = getCookie("csrftoken");
 
+                /* ================= FILE UPLOAD ================= */
+                const uploadArea = document.querySelector(".upload-area");
+                const fileInput = document.getElementById("file-upload");
 
-    <script>
-document.addEventListener("DOMContentLoaded", function () {
+                if (uploadArea && fileInput) {
+                    uploadArea.addEventListener("dragover", e => {
+                        e.preventDefault();
+                        uploadArea.style.borderColor = "#2e7d32";
+                    });
 
-/* ================= CSRF ================= */
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split(";");
-        for (let cookie of cookies) {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + "=")) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-const csrftoken = getCookie("csrftoken");
+                    uploadArea.addEventListener("dragleave", () => {
+                        uploadArea.style.borderColor = "#ccc";
+                    });
 
-/* ================= FILE UPLOAD ================= */
-const uploadArea = document.querySelector(".upload-area");
-const fileInput = document.getElementById("file-upload");
-
-if (uploadArea && fileInput) {
-    uploadArea.addEventListener("dragover", e => {
-        e.preventDefault();
-        uploadArea.style.borderColor = "#2e7d32";
-    });
-
-    uploadArea.addEventListener("dragleave", () => {
-        uploadArea.style.borderColor = "#ccc";
-    });
-
-    uploadArea.addEventListener("drop", e => {
-        e.preventDefault();
-        fileInput.files = e.dataTransfer.files;
-        uploadArea.innerHTML = `
+                    uploadArea.addEventListener("drop", e => {
+                        e.preventDefault();
+                        fileInput.files = e.dataTransfer.files;
+                        uploadArea.innerHTML = `
             <i class="fas fa-check-circle"></i>
             <p>${fileInput.files.length} file(s) selected</p>`;
-    });
-}
+                    });
+                }
 
-/* ================= CHATBOT ================= */
-const chatInput = document.querySelector(".chat-input input");
-const chatButton = document.querySelector(".chat-input button");
-const chatMessages = document.querySelector(".chat-messages");
+                /* ================= CHATBOT ================= */
+                const chatInput = document.querySelector(".chat-input input");
+                const chatButton = document.querySelector(".chat-input button");
+                const chatMessages = document.querySelector(".chat-messages");
 
-if (chatInput && chatButton) {
-    chatButton.addEventListener("click", sendMessage);
-    chatInput.addEventListener("keypress", e => {
-        if (e.key === "Enter") sendMessage();
-    });
-}
+                if (chatInput && chatButton) {
+                    chatButton.addEventListener("click", sendMessage);
+                    chatInput.addEventListener("keypress", e => {
+                        if (e.key === "Enter") sendMessage();
+                    });
+                }
 
-function sendMessage() {
-    const text = chatInput.value.trim();
-    if (!text) return;
+                function sendMessage() {
+                    const text = chatInput.value.trim();
+                    if (!text) return;
 
-    chatMessages.innerHTML += `<div class="message user-message">${text}</div>`;
-    chatInput.value = "";
+                    chatMessages.innerHTML += `<div class="message user-message">${text}</div>`;
+                    chatInput.value = "";
 
-    const formData = new FormData();
-    formData.append("message", text);
+                    const formData = new FormData();
+                    formData.append("message", text);
 
-    fetch("/chatbot/", {
-        method: "POST",
-        headers: { "X-CSRFToken": csrftoken },
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        chatMessages.innerHTML += `<div class="message bot-message">${data.reply}</div>`;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
-}
+                    fetch("/chatbot/", {
+                        method: "POST",
+                        headers: { "X-CSRFToken": csrftoken },
+                        body: formData
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            chatMessages.innerHTML += `<div class="message bot-message">${data.reply}</div>`;
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        });
+                }
 
-/* ================= LEAFLET MAP ================= */
-const mapContainer = document.getElementById("userMap");
+                /* ================= LEAFLET MAP ================= */
+                const mapContainer = document.getElementById("userMap");
 
-if (mapContainer) {
-    const map = L.map("userMap").setView([10.8505, 76.2711], 7);
+                if (mapContainer) {
+                    const map = L.map("userMap").setView([10.8505, 76.2711], 7);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors"
-    }).addTo(map);
+                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                        attribution: "&copy; OpenStreetMap contributors"
+                    }).addTo(map);
 
-    fetch("/get-locations/")
-        .then(res => res.json())
-        .then(locations => {
-            locations.forEach(loc => {
-                L.marker([loc.lat, loc.lng])
-                    .addTo(map)
-                    .bindPopup(`<strong>${loc.name}</strong>`);
+                    fetch("/get-locations/")
+                        .then(res => res.json())
+                        .then(locations => {
+                            locations.forEach(loc => {
+                                L.marker([loc.lat, loc.lng])
+                                    .addTo(map)
+                                    .bindPopup(`<strong>${loc.name}</strong>`);
+                            });
+                        });
+
+                    window.useMyLocation = function () {
+                        navigator.geolocation.getCurrentPosition(pos => {
+                            const { latitude, longitude } = pos.coords;
+                            map.setView([latitude, longitude], 14);
+                            L.marker([latitude, longitude])
+                                .addTo(map)
+                                .bindPopup("📍 You are here")
+                                .openPopup();
+                        });
+                    };
+                }
+
+                /* ================= REPORT SUBMIT ================= */
+                const reportForm = document.querySelector(".report-form");
+
+                if (reportForm) {
+                    reportForm.addEventListener("submit", function (e) {
+                        e.preventDefault();
+
+                        const formData = new FormData(reportForm);
+
+                        fetch("/submit-report/", {
+                            method: "POST",
+                            headers: { "X-CSRFToken": csrftoken },
+                            body: formData
+                        })
+                            .then(res => res.json())
+                            .then(() => {
+                                alert("✅ Garbage report submitted!");
+                                reportForm.reset();
+                            });
+                    });
+                }
+
             });
-        });
-
-    window.useMyLocation = function () {
-        navigator.geolocation.getCurrentPosition(pos => {
-            const { latitude, longitude } = pos.coords;
-            map.setView([latitude, longitude], 14);
-            L.marker([latitude, longitude])
-                .addTo(map)
-                .bindPopup("📍 You are here")
-                .openPopup();
-        });
-    };
-}
-
-/* ================= REPORT SUBMIT ================= */
-const reportForm = document.querySelector(".report-form");
-
-if (reportForm) {
-    reportForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(reportForm);
-
-        fetch("/submit-report/", {
-            method: "POST",
-            headers: { "X-CSRFToken": csrftoken },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(() => {
-            alert("✅ Garbage report submitted!");
-            reportForm.reset();
-        });
-    });
-}
-
-});
-</script>
+        </script>
 
 
 </body>
+
 </html>

@@ -15,7 +15,7 @@ from .models import LegalDumpingLocation
 from django.views.decorators.http import require_http_methods
 import cv2
 from django.http import StreamingHttpResponse
-from .evidence_manager import sync_and_list_events
+# from .evidence_manager import sync_and_list_events # Moved to management command
 from .models import DumpingEvent
 from .models import GarbageReport, GarbageEvidence,Normal_user
 import zipfile
@@ -24,10 +24,15 @@ from django.conf import settings
 from django.db.models import Count
 from django.db.models.functions import TruncDate
 from django.utils.timezone import now
+import csv
+from datetime import datetime
 
+
+def about(request):
+    return render(request, 'about.html')
 
 def home(request):
-    events = sync_and_list_events()
+    events = DumpingEvent.objects.all().order_by('-timestamp')[:20]
     return render(request, 'home.html', {"events": events})
 
 
@@ -346,43 +351,20 @@ def get_report_media(request, report_id):
 
 
 def cctv_detected_events(request):
+    events_qs = DumpingEvent.objects.select_related('camera').prefetch_related('plates').order_by('-timestamp')
     events = []
 
-    base_path = settings.EVIDENCE_ROOT  # login/evidence
-
-    for cam in os.listdir(base_path):
-        cam_path = os.path.join(base_path, cam)
-
-        if not os.path.isdir(cam_path):
-            continue
-
-        for event_folder in os.listdir(cam_path):
-            event_path = os.path.join(cam_path, event_folder)
-            json_path = os.path.join(event_path, "event.json")
-
-            if not os.path.exists(json_path):
-                continue
-
-            with open(json_path, "r") as f:
-                data = json.load(f)
-
-            # Extract first plate (if any)
-            plate_img = None
-            plate_conf = None
-
-            if data.get("plates"):
-                plate_img = data["plates"][0].get("image")
-                plate_conf = data["plates"][0].get("confidence")
-
-            events.append({
-                "event_id": data.get("event_id"),
-                "camera_id": data.get("camera_id"),
-                "location": data.get("location"),
-                "timestamp": data.get("timestamp"),
-                "plate_image": plate_img,
-                "confidence": plate_conf,
-                "video": data.get("dumping_video"),
-            })
+    for e in events_qs:
+        plate = e.plates.first()
+        events.append({
+            "event_id": e.event_id,
+            "camera_id": e.camera.camera_id,
+            "location": e.illegal_location,
+            "timestamp": e.timestamp.isoformat() if e.timestamp else None,
+            "plate_image": plate.image.url if plate and plate.image else None,
+            "confidence": None, # Not stored in DB
+            "video": e.dumping_video.name,
+        })
 
     return JsonResponse(events, safe=False)
 
@@ -390,28 +372,22 @@ def cctv_detected_events(request):
 
 
 def cctv_events(request):
-    base_dir = os.path.join(settings.BASE_DIR, "login", "evidence")
+    events_qs = DumpingEvent.objects.select_related('camera').prefetch_related('plates').order_by('-timestamp')
     events = []
-
-    for cam in os.listdir(base_dir):
-        cam_path = os.path.join(base_dir, cam)
-
-        if not os.path.isdir(cam_path):
-            continue
-
-        for event_folder in os.listdir(cam_path):
-            event_path = os.path.join(cam_path, event_folder, "event.json")
-
-            if os.path.exists(event_path):
-                with open(event_path, "r") as f:
-                    data = json.load(f)
-
-                    # add relative media paths
-                    data["camera_id"] = cam
-                    data["plate_image"] = f"login/evidence/{cam}/{event_folder}/{data.get('plate_image','')}"
-                    data["timestamp"] = data.get("timestamp")
-
-                    events.append(data)
+    
+    for e in events_qs:
+        plate = e.plates.first()
+        # Mimic old structure
+        data = {
+            "event_id": e.event_id,
+            "camera_id": e.camera.camera_id,
+            "location": e.illegal_location,
+            "timestamp": e.timestamp.isoformat() if e.timestamp else None,
+            "plate_image": plate.image.url if plate and plate.image else None,
+            "dumping_video": e.dumping_video.name,
+            # Add other fields if needed, mimicking JSON content
+        }
+        events.append(data)
 
     return JsonResponse(events, safe=False)
 
@@ -422,6 +398,73 @@ def cctv_event_detail(request, id):
         "location": event.illegal_location,
         "video_url": event.dumping_video.url
     })
+
+
+def api_cctv_events(request):
+    """
+    API for CCTV events with filtering, sorting, and CSV export.
+    """
+    if 'authority_user_id' not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+
+    qs = DumpingEvent.objects.select_related('camera').prefetch_related('plates')
+
+    # --- Filtering ---
+    date_str = request.GET.get('date')
+    if date_str:
+        try:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            qs = qs.filter(timestamp__date=date_obj)
+        except ValueError:
+            pass
+
+    # --- Sorting ---
+    sort_by = request.GET.get('sort', 'recent')
+    if sort_by == 'oldest':
+        qs = qs.order_by('timestamp')
+    elif sort_by == 'location':
+        qs = qs.order_by('illegal_location', '-timestamp')
+    else: # recent
+        qs = qs.order_by('-timestamp')
+
+    # --- CSV Export ---
+    export_fmt = request.GET.get('export')
+    if export_fmt == 'csv':
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="cctv_report_{now().strftime("%Y%m%d_%H%M")}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['Event ID', 'Camera', 'Location', 'Timestamp', 'Plates', 'Confidence'])
+
+        for event in qs:
+            plates = ", ".join([p.plate_text for p in event.plates.all()])
+            writer.writerow([
+                event.event_id,
+                event.camera.camera_id if event.camera else 'Unknown',
+                event.illegal_location,
+                event.timestamp.strftime("%Y-%m-%d %H:%M:%S") if event.timestamp else "",
+                plates,
+                "N/A" # Confidence not typically stored in DB model currently, placeholder
+            ])
+        return response
+
+    # --- JSON Response ---
+    data = []
+    for event in qs:
+        # Get first plate image if available
+        plate_obj = event.plates.first()
+        plate_url = plate_obj.image.url if (plate_obj and plate_obj.image) else None
+        
+        data.append({
+            "id": event.id,
+            "event_id": event.event_id,
+            "timestamp": event.timestamp.strftime("%Y-%m-%d %H:%M:%S") if event.timestamp else "",
+            "location": event.illegal_location,
+            "video_url": event.dumping_video.url if event.dumping_video else "",
+            "plate_image": plate_url
+        })
+    
+    return JsonResponse({"events": data})
 
 
 def analytics_dashboard(request):

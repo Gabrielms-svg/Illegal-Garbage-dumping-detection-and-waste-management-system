@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us - Dump Surveillance AI</title>
+
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .about-section {
+            padding: 4rem 0;
+            background-color: #fff;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .about-content h2,
+        .about-content h3 {
+            color: var(--primary-color, #2e7d32);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-list li {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color, #2e7d32);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <a href="{% url 'home' %}"
+                        style="text-decoration:none; display:flex; gap:10px; align-items:center;">
+                        <div class="logo-icon"><i class="fas fa-trash-alt"></i></div>
+                        <div class="logo-text">Dump<span>Surveillance AI</span></div>
+                    </a>
+                </div>
+
+                <div class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+
+                <div class="nav-links" id="navLinks">
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'about' %}" class="active">About</a>
+                    <div class="dropdown" id="loginDropdown">
+                        <div class="dropdown-btn">
+                            Login <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="{% url 'user_login' %}">User Login</a>
+                            <a href="{% url 'auth_login' %}">Authority (Government) Login</a>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'user_register' %}" class="btn btn-outline">Register</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Small -->
+    <section class="hero" style="min-height: 40vh; display: flex; align-items: center; justify-content: center;">
+        <div class="container">
+            <h1>About Our Project</h1>
+            <p>Building a cleaner, healthier, and sustainable society through technology.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <h2>Project Overview</h2>
+                <p>
+                    Our project is an intelligent, technology-driven solution designed to combat the growing problem of
+                    illegal garbage dumping and inefficient waste management in urban and rural environments. By
+                    integrating Machine Learning, Computer Vision, and Web Technologies, the system aims to create a
+                    cleaner, healthier, and more sustainable society.
+                </p>
+                <p>
+                    This platform continuously monitors CCTV and live camera feeds to automatically detect illegal
+                    dumping activities in public areas. Once a dumping event is identified, the system captures evidence
+                    in the form of images and videos, detects the vehicle and number plate, and records the location and
+                    time of the incident. These details are securely stored and made available to concerned authorities
+                    for further action.
+                </p>
+                <p>
+                    In addition to automated detection, the system also provides a user reporting mechanism, allowing
+                    citizens to report garbage dumping incidents through a simple web interface. This encourages
+                    community participation in maintaining cleanliness and accountability.
+                </p>
+
+                <h3>Features & Capabilities</h3>
+                <p>The system further includes:</p>
+                <ul class="feature-list">
+                    <li>📍 <strong>Hotspot Identification</strong> – detects frequent dumping locations using data
+                        analytics</li>
+                    <li>🤖 <strong>Awareness Chatbot</strong> – educates users about proper waste disposal methods</li>
+                    <li>🗺️ <strong>Legal Disposal Guidance</strong> – guides users to authorized waste disposal sites
+                    </li>
+                    <li>📊 <strong>Analytics Dashboard</strong> – helps authorities analyze trends and take preventive
+                        measures</li>
+                </ul>
+                <br>
+                <p>
+                    By combining automation, public participation, and data-driven decision-making, this project
+                    contributes towards the vision of Smart Cities, Clean India, and Sustainable Development Goals
+                    (SDGs). It empowers authorities, organizations, and communities to work together in building a
+                    cleaner and greener future.
+                </p>
+
+                <h3>🌍 Vision</h3>
+                <p>
+                    To create a cleaner, smarter, and more sustainable environment by leveraging technology to prevent
+                    illegal garbage dumping and promote responsible waste management.
+                </p>
+
+                <h3>🎯 Mission</h3>
+                <ul style="list-style-type: disc; padding-left: 20px; color: #555;">
+                    <li>To automatically detect and report illegal garbage dumping using AI and computer vision</li>
+                    <li>To assist authorities with accurate, real-time evidence for enforcement</li>
+                    <li>To encourage public participation in maintaining cleanliness</li>
+                    <li>To promote awareness about proper waste disposal and sustainability</li>
+                </ul>
+
+                <h3>Key Features</h3>
+                <ul class="feature-list">
+                    <li>📷 Automatic Illegal Dumping Detection</li>
+                    <li>🚗 Vehicle & Number Plate Identification</li>
+                    <li>🗂️ Evidence Storage (Image & Video)</li>
+                    <li>🧑‍🤝‍🧑 Citizen Garbage Reporting System</li>
+                    <li>📍 Dumping Hotspot Analysis</li>
+                    <li>🗺️ Legal Waste Disposal Guidance</li>
+                    <li>🤖 Waste Awareness Chatbot</li>
+                    <li>📊 Admin & Authority Dashboard</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about" style="background:var(--dark-bg, #222); color:#fff; padding:2rem 0; margin-top:2rem;">
+        <div class="container" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div class="footer-content"
+                style="display: flex; justify-content: space-around; width: 100%; flex-wrap: wrap; text-align: left;">
+                <div class="footer-about" style="flex: 1; min-width: 250px; padding: 1rem;">
+                    <div class="footer-logo" style="margin-bottom: 1rem; font-weight: bold; font-size: 1.2rem;">
+                        Dump<span>Surveillance AI</span></div>
+                    <p>AI-powered illegal dump detection system.</p>
+                </div>
+
+                <div class="footer-contact" style="flex: 1; min-width: 250px; padding: 1rem;">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> info@dumpsurveillance.ai</p>
+                    <p><i class="fas fa-phone"></i> +91 9834274845</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Nirmala college of Engineering , Meloor</p>
+                </div>
+            </div>
+
+            <div class="copyright"
+                style="margin-top: 2rem; border-top: 1px solid #444; padding-top: 1rem; width: 100%;">
+                <p>&copy; 2026 Dump Surveillance AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const navLinks = document.getElementById("navLinks");
+        const loginDropdown = document.getElementById("loginDropdown");
+
+        menuToggle.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+        });
+
+        const dropdownBtn = loginDropdown.querySelector(".dropdown-btn");
+        dropdownBtn.addEventListener("click", () => {
+            if (window.innerWidth <= 768) {
+                loginDropdown.classList.toggle("active");
+            }
+        });
+    </script>
+</body>
+
+</html>

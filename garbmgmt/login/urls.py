@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     path('',views.home,name="home"),
+    path('about/',views.about,name="about"),
     path('user_register/',views.user_register,name="user_register"),
     path('user_login/',views.user_login,name="user_login"),
     path('auth_login/',views.auth_login,name='auth_login'),
@@ -21,8 +22,8 @@ urlpatterns = [
     path("authority/user-reports/", views.user_reports,name='user_reports'),
     path("authority/user-reports/<int:report_id>/download/",views.download_report_zip,name="download_report_zip"),
     path("authority/user-report/<int:report_id>/media/",views.get_report_media,name="get_report_media"),
-    path("authority/cctv-events/", views.cctv_detected_events, name="cctv_events"),
-    path("authority/cctv-events/", views.cctv_events, name="cctv_events"),
+    path("authority/cctv-events/", views.api_cctv_events, name="cctv_events_api"),
+    path("authority/cctv-events-legacy/", views.cctv_events, name="cctv_events"), # Renamed to avoid partial matching issues or conflict
     path("authority/cctv-event/<int:id>/", views.cctv_event_detail),
     path("analytics/", views.analytics_dashboard, name="analytics_dashboard"),
 
