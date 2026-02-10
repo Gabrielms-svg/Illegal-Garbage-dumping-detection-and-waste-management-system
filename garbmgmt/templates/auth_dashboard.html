@@ -587,6 +587,83 @@
       font-size: 30px;
       cursor: pointer;
     }
+
+    /* Locations List Styles */
+    .locations-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .locations-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .locations-list-container {
+      height: 400px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background-color: #fafafa;
+    }
+
+    .location-list-item {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      transition: background-color 0.2s;
+    }
+
+    .location-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .location-list-item:hover {
+      background-color: #f0f4ff;
+    }
+
+    .location-info h5 {
+      margin: 0 0 5px 0;
+      font-size: 0.95rem;
+      color: var(--primary-dark);
+    }
+
+    .location-info p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--light-text);
+    }
+
+    .location-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-icon {
+      padding: 5px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-view {
+      background-color: var(--primary-color);
+    }
+
+    .btn-delete {
+      background-color: var(--accent-color);
+    }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -872,8 +949,27 @@
           edit or delete.
         </p>
 
-        <div class="map-container" style="height: 400px">
-          <div id="map" style="width: 100%; height: 100%; border-radius: 4px"></div>
+        <div class="locations-layout">
+          <!-- Map Side -->
+          <div class="map-wrapper">
+            <div class="map-container" style="height: 400px; margin-bottom: 0;">
+              <div id="map" style="width: 100%; height: 100%; border-radius: 4px"></div>
+            </div>
+          </div>
+
+          <!-- List Side -->
+          <div class="locations-list-wrapper">
+            <h4
+              style="margin-bottom: 10px; color: var(--primary-dark); border-bottom: 2px solid #eee; padding-bottom: 5px;">
+              Saved Locations <span id="listCount"
+                style="font-size: 0.8em; color: gray; font-weight: normal;">(0)</span>
+            </h4>
+            <div id="locationsList" class="locations-list-container">
+              <div style="padding: 20px; text-align: center; color: #999;">
+                Loading locations...
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="map-controls">
@@ -1079,30 +1175,96 @@
             markers.forEach((m) => map.removeLayer(m));
             markers = [];
 
+            // Clear list
+            const listContainer = document.getElementById("locationsList");
+            listContainer.innerHTML = "";
+
+            document.getElementById("listCount").innerText = `(${locations.length})`;
+            document.getElementById("locationCount").innerText = `${locations.length} legal dumping locations loaded`;
+
+            if (locations.length === 0) {
+              listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No locations added yet.</div>';
+            }
+
             locations.forEach((loc) => {
-              const marker = L.marker([loc.lat, loc.lng]).addTo(map);
+              // Add Marker
+              const marker = L.marker([loc.lat, loc.lng], { icon: getMarkerIcon(loc.type) }).addTo(map);
               marker.locationId = loc.id;
+              marker.locationData = loc; // Store data for easy access
 
               marker.on("click", () => {
-                selectedMarker = marker;
-                document.getElementById("deleteLocationBtn").disabled = false;
+                selectMarker(marker);
               });
+
               marker.bindPopup(`
                     <b>${loc.name}</b><br>
-                    Type: ${loc.type}<br>
+                    Type: ${getLocationTypeText(loc.type)}<br>
                     Lat: ${loc.lat.toFixed(5)}<br>
                     Lng: ${loc.lng.toFixed(5)}
                 `);
 
               markers.push(marker);
+
+              // Add to List
+              const item = document.createElement("div");
+              item.className = "location-list-item";
+              item.innerHTML = `
+                <div class="location-info">
+                    <h5>${loc.name}</h5>
+                    <p>${getLocationTypeText(loc.type)}</p>
+                </div>
+                <div class="location-actions">
+                    <button class="btn-icon btn-view" title="View on Map" onclick="focusLocation(${loc.lat}, ${loc.lng}, ${loc.id})">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" title="Delete Location" onclick="deleteLocationFromList(${loc.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+              `;
+              listContainer.appendChild(item);
             });
 
-            document.getElementById(
-              "locationCount"
-            ).innerText = `${locations.length} legal dumping locations loaded`;
           })
-          .catch((err) => console.error("Error loading locations:", err));
+          .catch((err) => {
+            console.error("Error loading locations:", err);
+            document.getElementById("locationsList").innerHTML = '<div style="padding: 10px; color: red;">Error loading locations</div>';
+          });
+
       }
+
+      function focusLocation(lat, lng, id) {
+        map.setView([lat, lng], 15);
+        const marker = markers.find(m => m.locationId === id);
+        if (marker) {
+          marker.openPopup();
+          selectMarker(marker);
+        }
+      }
+
+      function deleteLocationFromList(id) {
+        if (!confirm("Are you sure you want to delete this location?")) return;
+
+        fetch("/delete-location/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({ id: id }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              loadLocations(); // Refresh both map and list
+              clearSelection();
+            } else {
+              alert("Failed to delete location.");
+            }
+          })
+          .catch((err) => console.error("Deletion error:", err));
+      }
+
 
       // Load markers when page opens
       loadLocations();
@@ -1144,6 +1306,10 @@
             })
             .catch((err) => console.error("🔥 Fetch error:", err));
         });
+
+      // Expose to window for onclick/inline usage
+      window.focusLocation = focusLocation;
+      window.deleteLocationFromList = deleteLocationFromList;
     </script>
 
     <script>
@@ -1176,6 +1342,8 @@
               alert("Location saved successfully!");
               document.getElementById("locationForm").style.display = "none";
               document.getElementById("locationName").value = "";
+              loadLocations(); // Reload list and markers
+              clearSelection();
             })
             .catch((err) => console.error(err));
         });

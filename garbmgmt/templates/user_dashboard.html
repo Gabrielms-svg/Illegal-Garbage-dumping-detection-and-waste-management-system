@@ -413,11 +413,77 @@
             margin: 0 2px;
             color: #d32f2f;
         }
+
+        /* Locations List Styles */
+        .locations-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .locations-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .locations-list-container {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+
+        .location-list-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: background-color 0.2s;
+        }
+
+        .location-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .location-list-item:hover {
+            background-color: #f0f4ff;
+        }
+
+        .location-info h5 {
+            margin: 0 0 5px 0;
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+        }
+
+        .location-info p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+
+        .btn-icon {
+            padding: 5px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+        }
     </style>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
 </head>
 
@@ -456,6 +522,38 @@
                 users</p>
         </section>
 
+        <!-- Map Section (Full Width) -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header">
+                <h3><i class="fas fa-map-marker-alt card-icon"></i> Legal Dumping Locations</h3>
+            </div>
+
+            <p style="margin-bottom: 1rem;">Find authorized garbage bins and recycling centers near you:</p>
+
+            <div class="locations-layout">
+                <!-- Map Side -->
+                <div class="map-wrapper">
+                    <div id="userMap" class="map-container" style="height: 500px; margin-bottom: 0;"></div>
+                    <button class="btn btn-secondary" onclick="useMyLocation()" style="margin-top: 10px;">
+                        <i class="fas fa-location-arrow"></i> Use My Location
+                    </button>
+                </div>
+
+                <!-- List Side -->
+                <div class="locations-list-wrapper">
+                    <h4
+                        style="margin-bottom: 10px; color: var(--primary-dark); border-bottom: 2px solid #eee; padding-bottom: 5px;">
+                        Nearby Locations
+                    </h4>
+                    <div id="locationsList" class="locations-list-container" style="height: 500px;">
+                        <div style="padding: 20px; text-align: center; color: #999;">
+                            Loading locations...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
             <!-- Report Offence Card -->
@@ -480,7 +578,7 @@
                         <option value="high">High - Large scale illegal dumping</option>
                     </select>
 
-                    <div class="upload-area" onclick="document.getElementById('file-upload').click()">
+                    <div class="upload-area">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Click to upload evidence (images/videos)</p>
                         <input type="file" id="file-upload" name="evidence" accept="image/*,video/*" hidden multiple>
@@ -490,24 +588,6 @@
                         <i class="fas fa-paper-plane"></i> Submit Report
                     </button>
                 </form>
-            </div>
-
-            <!-- Legal Dumping Locations Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h3><i class="fas fa-map-marker-alt card-icon"></i> Legal Dumping Locations</h3>
-                    <i class="fas fa-search"></i>
-                </div>
-
-                <p>Find authorized garbage bins and recycling centers near you:</p>
-
-                <div id="userMap" class="map-container"></div>
-
-
-                <button class="btn btn-secondary" onclick="useMyLocation()">
-                    <i class="fas fa-location-arrow"></i> Use My Location
-                </button>
-
             </div>
 
             <!-- Waste Management Chatbot Card -->
@@ -584,21 +664,59 @@
                 const fileInput = document.getElementById("file-upload");
 
                 if (uploadArea && fileInput) {
+                    // Click to upload - but not on the file input itself
+                    uploadArea.addEventListener("click", (e) => {
+                        if (e.target !== fileInput) {
+                            fileInput.click();
+                        }
+                    });
+
+                    // Drag and Drop
                     uploadArea.addEventListener("dragover", e => {
                         e.preventDefault();
                         uploadArea.style.borderColor = "#2e7d32";
+                        uploadArea.style.backgroundColor = "#f1f8e9";
                     });
 
                     uploadArea.addEventListener("dragleave", () => {
                         uploadArea.style.borderColor = "#ccc";
+                        uploadArea.style.backgroundColor = "transparent";
                     });
+
+                    function updateUploadArea(files) {
+                        if (files.length > 0) {
+                            const fileNames = Array.from(files).map(f => f.name).join(", ");
+                            // Find or create a display element, but keep the file input
+                            let displayDiv = uploadArea.querySelector('.upload-display');
+                            if (!displayDiv) {
+                                displayDiv = document.createElement('div');
+                                displayDiv.className = 'upload-display';
+                                uploadArea.insertBefore(displayDiv, fileInput);
+                                // Hide original content
+                                const icon = uploadArea.querySelector('.fas');
+                                const p = uploadArea.querySelector('p');
+                                if (icon) icon.style.display = 'none';
+                                if (p) p.style.display = 'none';
+                            }
+                            displayDiv.innerHTML = `
+                                <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
+                                <p style="color: #2e7d32; font-weight: 500; margin-top: 5px;">${files.length} file(s) selected:</p>
+                                <p style="font-size: 0.85rem; color: #555;">${fileNames}</p>
+                            `;
+                            uploadArea.style.borderColor = "#2e7d32";
+                            uploadArea.style.backgroundColor = "#e8f5e9";
+                        }
+                    }
 
                     uploadArea.addEventListener("drop", e => {
                         e.preventDefault();
                         fileInput.files = e.dataTransfer.files;
-                        uploadArea.innerHTML = `
-            <i class="fas fa-check-circle"></i>
-            <p>${fileInput.files.length} file(s) selected</p>`;
+                        updateUploadArea(fileInput.files);
+                    });
+
+                    // File Input Change
+                    fileInput.addEventListener("change", () => {
+                        updateUploadArea(fileInput.files);
                     });
                 }
 
@@ -638,33 +756,145 @@
 
                 /* ================= LEAFLET MAP ================= */
                 const mapContainer = document.getElementById("userMap");
+                let userMap = null;
+                let userMarkers = [];
+
+                function getLocationTypeText(type) {
+                    const types = {
+                        bin: "Garbage Bin",
+                        recycling: "Recycling Center",
+                        transfer: "Transfer Station",
+                        hazardous: "Hazardous Waste",
+                    };
+                    return types[type] || "Unknown";
+                }
 
                 if (mapContainer) {
-                    const map = L.map("userMap").setView([10.8505, 76.2711], 7);
+                    userMap = L.map("userMap").setView([10.8505, 76.2711], 7);
+                    let routingControl = null;
+                    let locationData = [];
 
                     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                         attribution: "&copy; OpenStreetMap contributors"
-                    }).addTo(map);
+                    }).addTo(userMap);
 
                     fetch("/get-locations/")
                         .then(res => res.json())
                         .then(locations => {
+                            locationData = locations; // Store for routing
+                            const listContainer = document.getElementById("locationsList");
+                            if (listContainer) listContainer.innerHTML = "";
+
+                            if (locations.length === 0 && listContainer) {
+                                listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">No locations found.</div>';
+                            }
+
                             locations.forEach(loc => {
-                                L.marker([loc.lat, loc.lng])
-                                    .addTo(map)
-                                    .bindPopup(`<strong>${loc.name}</strong>`);
+                                // Marker
+                                const marker = L.marker([loc.lat, loc.lng])
+                                    .addTo(userMap)
+                                    .bindPopup(`
+                                        <strong>${loc.name}</strong><br>
+                                        ${getLocationTypeText(loc.type)}
+                                    `);
+                                marker.locationId = loc.id;
+                                userMarkers.push(marker);
+
+                                // List Item
+                                if (listContainer) {
+                                    const item = document.createElement("div");
+                                    item.className = "location-list-item";
+                                    item.innerHTML = `
+                                        <div class="location-info">
+                                            <h5>${loc.name}</h5>
+                                            <p>${getLocationTypeText(loc.type)}</p>
+                                        </div>
+                                        <div class="location-actions">
+                                            <button class="btn-icon" title="View on Map" onclick="focusUserLocation(${loc.lat}, ${loc.lng}, ${loc.id})">
+                                                <i class="fas fa-crosshairs"></i>
+                                            </button>
+                                        </div>
+                                    `;
+                                    listContainer.appendChild(item);
+                                }
                             });
                         });
 
                     window.useMyLocation = function () {
+                        if (!navigator.geolocation) {
+                            alert("Geolocation is not supported by your browser");
+                            return;
+                        }
+
                         navigator.geolocation.getCurrentPosition(pos => {
                             const { latitude, longitude } = pos.coords;
-                            map.setView([latitude, longitude], 14);
-                            L.marker([latitude, longitude])
-                                .addTo(map)
+                            const userLatLng = L.latLng(latitude, longitude);
+
+                            userMap.setView(userLatLng, 14);
+
+                            // Remove existing user marker
+                            if (window.userLocationMarker) {
+                                userMap.removeLayer(window.userLocationMarker);
+                            }
+
+                            window.userLocationMarker = L.marker(userLatLng)
+                                .addTo(userMap)
                                 .bindPopup("📍 You are here")
                                 .openPopup();
+
+                            // Routing Logic to Nearest Location
+                            if (locationData.length > 0) {
+                                let nearest = null;
+                                let minDistance = Infinity;
+
+                                locationData.forEach(loc => {
+                                    const locLatLng = L.latLng(loc.lat, loc.lng);
+                                    const distance = userLatLng.distanceTo(locLatLng);
+                                    if (distance < minDistance) {
+                                        minDistance = distance;
+                                        nearest = loc;
+                                    }
+                                });
+
+                                if (nearest) {
+                                    // Remove previous route
+                                    if (routingControl) {
+                                        userMap.removeControl(routingControl);
+                                    }
+
+                                    try {
+                                        routingControl = L.Routing.control({
+                                            waypoints: [
+                                                userLatLng,
+                                                L.latLng(nearest.lat, nearest.lng)
+                                            ],
+                                            routeWhileDragging: false,
+                                            draggableWaypoints: false,
+                                            addWaypoints: false,
+                                            createMarker: function () { return null; }, // No extra markers
+                                            show: false // Hide instructions panel (optional)
+                                        }).addTo(userMap);
+
+                                        // console.log("Routing to:", nearest.name);
+                                    } catch (e) {
+                                        console.error("Routing error:", e);
+                                        alert("Could not calculate route. Ensure internet connection for routing service.");
+                                    }
+                                }
+                            }
+
+                        }, err => {
+                            console.error("Geolocation error:", err);
+                            alert("Unable to retrieve your location.");
                         });
+                    };
+
+                    window.focusUserLocation = function (lat, lng, id) {
+                        userMap.setView([lat, lng], 16);
+                        const marker = userMarkers.find(m => m.locationId === id);
+                        if (marker) {
+                            marker.openPopup();
+                        }
                     };
                 }
 

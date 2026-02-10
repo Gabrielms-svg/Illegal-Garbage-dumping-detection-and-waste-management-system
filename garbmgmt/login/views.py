@@ -476,7 +476,7 @@ def analytics_dashboard(request):
     # 1. Dumping events over time
     cctv_time_qs = (
         DumpingEvent.objects
-        .annotate(date=TruncDate('timestamp'))
+        .extra(select={'date': 'DATE(timestamp)'})
         .values('date')
         .annotate(count=Count('id'))
         .order_by('date')
@@ -498,10 +498,15 @@ def analytics_dashboard(request):
 
     # ================= USER ANALYTICS =================
 
+
     # 3. User reports over time
+    from django.db.models import F
+    from django.db.models.functions import Cast
+    from django.db.models import DateField
+    
     user_time_qs = (
         GarbageReport.objects
-        .annotate(date=TruncDate('created_at'))
+        .extra(select={'date': 'DATE(created_at)'})
         .values('date')
         .annotate(count=Count('id'))
         .order_by('date')
@@ -509,6 +514,12 @@ def analytics_dashboard(request):
 
     user_time_labels = [str(x['date']) for x in user_time_qs]
     user_time_counts = [x['count'] for x in user_time_qs]
+    
+    # DEBUG
+    print(f"DEBUG: user_time_qs count = {user_time_qs.count()}")
+    print(f"DEBUG: user_time_labels = {user_time_labels}")
+    print(f"DEBUG: user_time_counts = {user_time_counts}")
+
 
     # 4. Reports by severity
     severity_qs = (
