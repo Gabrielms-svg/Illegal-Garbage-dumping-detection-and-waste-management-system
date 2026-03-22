@@ -24,6 +24,10 @@ Web Framework & Backend
 -------------------------------
 Django: 3.2.7
 
+Pytest : 9.0.2
+
+Pluggy : 1.6.0
+
 asgiref: 3.9.1
 
 sqlparse: 0.5.3
