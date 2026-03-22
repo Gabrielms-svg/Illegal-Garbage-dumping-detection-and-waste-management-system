@@ -8,9 +8,6 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <a href="{% url 'auth_dashboard' %}" class="btn btn-secondary">
-        ⬅ Back to Dashboard
-    </a>
 
     <style>
         body {
@@ -74,6 +71,10 @@
 </head>
 
 <body>
+
+    <a href="{% url 'auth_dashboard' %}" class="btn btn-secondary">
+        ⬅ Back to Dashboard
+    </a>
 
     <h1>🚮 Illegal Dumping Analytics Dashboard</h1>
 
@@ -157,38 +158,61 @@
     </div>
 
     <!-- ================= DATA FROM DJANGO ================= -->
+    {{ cctv_time_labels|json_script:"cctvTimeLabels-data" }}
+    {{ cctv_time_counts|json_script:"cctvTimeCounts-data" }}
+    {{ cctv_location_labels|json_script:"cctvLocationLabels-data" }}
+    {{ cctv_location_counts|json_script:"cctvLocationCounts-data" }}
+    {{ user_time_labels|json_script:"userTimeLabels-data" }}
+    {{ user_time_counts|json_script:"userTimeCounts-data" }}
+    {{ severity_labels|json_script:"severityLabels-data" }}
+    {{ severity_counts|json_script:"severityCounts-data" }}
+    {{ user_location_labels|json_script:"userLocationLabels-data" }}
+    {{ user_location_counts|json_script:"userLocationCounts-data" }}
+    {{ evidence_report_labels|json_script:"evidenceReportLabels-data" }}
+    {{ evidence_report_counts|json_script:"evidenceReportCounts-data" }}
+    {{ hotspot_labels|json_script:"hotspotLabels-data" }}
+    {{ hotspot_cctv_counts|json_script:"hotspotCctvCounts-data" }}
+    {{ hotspot_user_counts|json_script:"hotspotUserCounts-data" }}
+    {{ combined_time_labels|json_script:"combinedTimeLabels-data" }}
+    {{ combined_cctv_counts|json_script:"combinedCctvCounts-data" }}
+    {{ combined_user_counts|json_script:"combinedUserCounts-data" }}
+    {{ severity_vs_cctv_labels|json_script:"severityVsCctvLabels-data" }}
+    {{ severity_vs_cctv_counts|json_script:"severityVsCctvCounts-data" }}
+    {{ camera_labels|json_script:"cameraLabels-data" }}
+    {{ camera_efficiency_counts|json_script:"cameraEfficiencyCounts-data" }}
+
     <script>
-        const cctvTimeLabels = {{ cctv_time_labels| safe }};
-        const cctvTimeCounts = {{ cctv_time_counts| safe }};
+        const cctvTimeLabels = JSON.parse(document.getElementById('cctvTimeLabels-data').textContent);
+        const cctvTimeCounts = JSON.parse(document.getElementById('cctvTimeCounts-data').textContent);
 
-        const cctvLocationLabels = {{ cctv_location_labels| safe }};
-        const cctvLocationCounts = {{ cctv_location_counts| safe }};
+        const cctvLocationLabels = JSON.parse(document.getElementById('cctvLocationLabels-data').textContent);
+        const cctvLocationCounts = JSON.parse(document.getElementById('cctvLocationCounts-data').textContent);
 
-        const userTimeLabels = {{ user_time_labels| safe }};
-        const userTimeCounts = {{ user_time_counts| safe }};
+        const userTimeLabels = JSON.parse(document.getElementById('userTimeLabels-data').textContent);
+        const userTimeCounts = JSON.parse(document.getElementById('userTimeCounts-data').textContent);
 
-        const severityLabels = {{ severity_labels| safe }};
-        const severityCounts = {{ severity_counts| safe }};
+        const severityLabels = JSON.parse(document.getElementById('severityLabels-data').textContent);
+        const severityCounts = JSON.parse(document.getElementById('severityCounts-data').textContent);
 
-        const userLocationLabels = {{ user_location_labels| safe }};
-        const userLocationCounts = {{ user_location_counts| safe }};
+        const userLocationLabels = JSON.parse(document.getElementById('userLocationLabels-data').textContent);
+        const userLocationCounts = JSON.parse(document.getElementById('userLocationCounts-data').textContent);
 
-        const evidenceReportLabels = {{ evidence_report_labels| safe }};
-        const evidenceReportCounts = {{ evidence_report_counts| safe }};
+        const evidenceReportLabels = JSON.parse(document.getElementById('evidenceReportLabels-data').textContent);
+        const evidenceReportCounts = JSON.parse(document.getElementById('evidenceReportCounts-data').textContent);
 
-        const hotspotLabels = {{ hotspot_labels| safe }};
-        const hotspotCctvCounts = {{ hotspot_cctv_counts| safe }};
-        const hotspotUserCounts = {{ hotspot_user_counts| safe }};
+        const hotspotLabels = JSON.parse(document.getElementById('hotspotLabels-data').textContent);
+        const hotspotCctvCounts = JSON.parse(document.getElementById('hotspotCctvCounts-data').textContent);
+        const hotspotUserCounts = JSON.parse(document.getElementById('hotspotUserCounts-data').textContent);
 
-        const combinedTimeLabels = {{ combined_time_labels| safe }};
-        const combinedCctvCounts = {{ combined_cctv_counts| safe }};
-        const combinedUserCounts = {{ combined_user_counts| safe }};
+        const combinedTimeLabels = JSON.parse(document.getElementById('combinedTimeLabels-data').textContent);
+        const combinedCctvCounts = JSON.parse(document.getElementById('combinedCctvCounts-data').textContent);
+        const combinedUserCounts = JSON.parse(document.getElementById('combinedUserCounts-data').textContent);
 
-        const severityVsCctvLabels = {{ severity_vs_cctv_labels| safe }};
-        const severityVsCctvCounts = {{ severity_vs_cctv_counts| safe }};
+        const severityVsCctvLabels = JSON.parse(document.getElementById('severityVsCctvLabels-data').textContent);
+        const severityVsCctvCounts = JSON.parse(document.getElementById('severityVsCctvCounts-data').textContent);
 
-        const cameraLabels = {{ camera_labels| safe }};
-        const cameraEfficiencyCounts = {{ camera_efficiency_counts| safe }};
+        const cameraLabels = JSON.parse(document.getElementById('cameraLabels-data').textContent);
+        const cameraEfficiencyCounts = JSON.parse(document.getElementById('cameraEfficiencyCounts-data').textContent);
     </script>
 
     <!-- ================= CHART INITIALIZATION ================= -->
@@ -229,13 +253,13 @@
         console.log('Labels:', cctvTimeLabels);
         console.log('Counts:', cctvTimeCounts);
 
-        new Chart(cctvTimeChart, {
+        new Chart(document.getElementById('cctvTimeChart'), {
             type: 'line',
             data: { labels: cctvTimeLabels, datasets: [{ label: 'CCTV Dumping Events', data: cctvTimeCounts }] },
             options: chartOptions()
         });
 
-        new Chart(cctvLocationChart, {
+        new Chart(document.getElementById('cctvLocationChart'), {
             type: 'bar',
             data: { labels: cctvLocationLabels, datasets: [{ label: 'Dumping Count', data: cctvLocationCounts }] },
             options: chartOptions()
@@ -246,33 +270,39 @@
         console.log('Labels:', userTimeLabels);
         console.log('Counts:', userTimeCounts);
 
-        new Chart(userTimeChart, {
+        new Chart(document.getElementById('userTimeChart'), {
             type: 'line',
             data: { labels: userTimeLabels, datasets: [{ label: 'User Reports', data: userTimeCounts }] },
             options: chartOptions()
         });
 
 
-        new Chart(severityChart, {
+        new Chart(document.getElementById('severityChart'), {
             type: 'pie',
             data: { labels: severityLabels, datasets: [{ data: severityCounts }] },
-            options: chartOptions()
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true }
+                }
+            }
         });
 
-        new Chart(userLocationChart, {
+        new Chart(document.getElementById('userLocationChart'), {
             type: 'bar',
             data: { labels: userLocationLabels, datasets: [{ label: 'Reports', data: userLocationCounts }] },
             options: chartOptions()
         });
 
-        new Chart(evidenceChart, {
+        new Chart(document.getElementById('evidenceChart'), {
             type: 'bar',
             data: { labels: evidenceReportLabels, datasets: [{ label: 'Evidence Count', data: evidenceReportCounts }] },
             options: chartOptions()
         });
 
         /* COMBINED */
-        new Chart(hotspotChart, {
+        new Chart(document.getElementById('hotspotChart'), {
             type: 'bar',
             data: {
                 labels: hotspotLabels,
@@ -284,7 +314,7 @@
             options: chartOptions()
         });
 
-        new Chart(combinedTimeChart, {
+        new Chart(document.getElementById('combinedTimeChart'), {
             type: 'line',
             data: {
                 labels: combinedTimeLabels,

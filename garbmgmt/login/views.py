@@ -120,14 +120,18 @@ def chatbot_api(request):
     print("VIEW HIT ✔")                     # Debug
     print("POST:", request.POST)            # Debug
 
-    if request.method == "POST":
-        user_message = request.POST.get("message", "")
-        print("USER MESSAGE:", user_message)  # Debug
+    try:
+        if request.method == "POST":
+            user_message = request.POST.get("message", "")
+            print("USER MESSAGE:", user_message)  # Debug
 
-        reply = get_response(user_message)
-        return JsonResponse({"reply": reply})
+            reply = get_response(user_message)
+            return JsonResponse({"reply": reply})
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+        return JsonResponse({"error": "Invalid request"}, status=400)
+    except Exception as e:
+        print(f"Chatbot Exception: {e}")
+        return JsonResponse({"error": "An internal error occurred. Our assistant is temporarily unavailable."}, status=500)
 
 def user_logout(request):
     if 'normal_user_id' in request.session:
@@ -146,13 +150,28 @@ def auth_dashboard(request):
         return redirect('auth_login')
     
     reports = GarbageReport.objects.prefetch_related("evidences").order_by("-created_at")
-
-    
     cctv_events = DumpingEvent.objects.all().order_by('-timestamp')
+    
+    from django.utils.timezone import now
+    current_time = now()
+    
+    # Calculate in Python to prevent MySQL timezone table lookup bugs on local Windows DBMS
+    total_reports_this_month = sum(
+        1 for r in reports 
+        if r.created_at.year == current_time.year and r.created_at.month == current_time.month
+    )
+    
+    new_cctv_today = sum(
+        1 for e in cctv_events 
+        if e.timestamp.date() == current_time.date()
+    )
+
     context = {
         "cctv_events": cctv_events,
         "reports": reports,
-        "last_updated": now(),
+        "last_updated": current_time,
+        "total_reports_this_month": total_reports_this_month,
+        "new_cctv_today": new_cctv_today,
     }
     return render(request,'auth_dashboard.html',context)
 

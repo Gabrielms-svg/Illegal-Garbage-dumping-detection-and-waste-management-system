@@ -683,41 +683,129 @@
                         uploadArea.style.backgroundColor = "transparent";
                     });
 
+                    let accumulatedFiles = new DataTransfer();
+
+                    window.removeFile = function(fileName, fileSize) {
+                        const dt = new DataTransfer();
+                        Array.from(accumulatedFiles.files).forEach(f => {
+                            if (f.name !== fileName || f.size !== fileSize) {
+                                dt.items.add(f);
+                            }
+                        });
+                        accumulatedFiles = dt;
+                        fileInput.files = accumulatedFiles.files;
+                        updateUploadArea(fileInput.files);
+                    };
+
                     function updateUploadArea(files) {
+                        let displayDiv = uploadArea.querySelector('.upload-display');
+                        
                         if (files.length > 0) {
-                            const fileNames = Array.from(files).map(f => f.name).join(", ");
-                            // Find or create a display element, but keep the file input
-                            let displayDiv = uploadArea.querySelector('.upload-display');
                             if (!displayDiv) {
                                 displayDiv = document.createElement('div');
                                 displayDiv.className = 'upload-display';
                                 uploadArea.insertBefore(displayDiv, fileInput);
-                                // Hide original content
                                 const icon = uploadArea.querySelector('.fas');
                                 const p = uploadArea.querySelector('p');
                                 if (icon) icon.style.display = 'none';
                                 if (p) p.style.display = 'none';
                             }
+                            
                             displayDiv.innerHTML = `
                                 <i class="fas fa-check-circle" style="color: #2e7d32;"></i>
-                                <p style="color: #2e7d32; font-weight: 500; margin-top: 5px;">${files.length} file(s) selected:</p>
-                                <p style="font-size: 0.85rem; color: #555;">${fileNames}</p>
+                                <p style="color: #2e7d32; font-weight: 500; margin-top: 5px; margin-bottom: 10px;">${files.length} file(s) selected:</p>
+                                <div class="file-list" style="text-align: left; max-height: 120px; overflow-y: auto; padding: 0 5px;"></div>
                             `;
+                            
+                            const fileList = displayDiv.querySelector('.file-list');
+                            Array.from(files).forEach(file => {
+                                const itemDiv = document.createElement('div');
+                                itemDiv.style.display = "flex";
+                                itemDiv.style.justifyContent = "space-between";
+                                itemDiv.style.alignItems = "center";
+                                itemDiv.style.backgroundColor = "#fff";
+                                itemDiv.style.border = "1px solid #ddd";
+                                itemDiv.style.padding = "4px 8px";
+                                itemDiv.style.marginBottom = "4px";
+                                itemDiv.style.borderRadius = "4px";
+                                
+                                const span = document.createElement('span');
+                                span.style.fontSize = "0.85rem";
+                                span.style.color = "#555";
+                                span.style.overflow = "hidden";
+                                span.style.textOverflow = "ellipsis";
+                                span.style.whiteSpace = "nowrap";
+                                span.style.maxWidth = "85%";
+                                span.textContent = file.name;
+                                
+                                const btn = document.createElement('button');
+                                btn.type = "button";
+                                btn.innerHTML = '<i class="fas fa-times"></i>';
+                                btn.style.background = "none";
+                                btn.style.border = "none";
+                                btn.style.color = "#d32f2f";
+                                btn.style.cursor = "pointer";
+                                btn.onclick = (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    removeFile(file.name, file.size);
+                                };
+                                
+                                itemDiv.appendChild(span);
+                                itemDiv.appendChild(btn);
+                                fileList.appendChild(itemDiv);
+                            });
+
                             uploadArea.style.borderColor = "#2e7d32";
                             uploadArea.style.backgroundColor = "#e8f5e9";
+                        } else {
+                            if (displayDiv) displayDiv.remove();
+                            const icon = uploadArea.querySelector('.fas');
+                            const p = uploadArea.querySelector('p');
+                            if (icon) icon.style.display = 'block';
+                            if (p) p.style.display = 'block';
+                            uploadArea.style.borderColor = "#ccc";
+                            uploadArea.style.backgroundColor = "transparent";
                         }
                     }
 
                     uploadArea.addEventListener("drop", e => {
                         e.preventDefault();
-                        fileInput.files = e.dataTransfer.files;
+                        Array.from(e.dataTransfer.files).forEach(file => {
+                            accumulatedFiles.items.add(file);
+                        });
+                        fileInput.files = accumulatedFiles.files;
                         updateUploadArea(fileInput.files);
                     });
 
                     // File Input Change
                     fileInput.addEventListener("change", () => {
+                        Array.from(fileInput.files).forEach(file => {
+                            let exists = Array.from(accumulatedFiles.files).some(f => f.name === file.name && f.size === file.size);
+                            if (!exists) {
+                                accumulatedFiles.items.add(file);
+                            }
+                        });
+                        fileInput.files = accumulatedFiles.files;
                         updateUploadArea(fileInput.files);
                     });
+
+                    // Clear accumulated files on form reset
+                    const form = document.querySelector(".report-form");
+                    if (form) {
+                        form.addEventListener("reset", () => {
+                            accumulatedFiles = new DataTransfer();
+                            fileInput.files = accumulatedFiles.files;
+                            const displayDiv = uploadArea.querySelector('.upload-display');
+                            if (displayDiv) displayDiv.remove();
+                            const icon = uploadArea.querySelector('.fas');
+                            const p = uploadArea.querySelector('p');
+                            if (icon) icon.style.display = 'block';
+                            if (p) p.style.display = 'block';
+                            uploadArea.style.borderColor = "#ccc";
+                            uploadArea.style.backgroundColor = "transparent";
+                        });
+                    }
                 }
 
                 /* ================= CHATBOT ================= */
@@ -738,6 +826,10 @@
 
                     chatMessages.innerHTML += `<div class="message user-message">${text}</div>`;
                     chatInput.value = "";
+                    
+                    // Prevent multiple requests
+                    chatInput.disabled = true;
+                    chatButton.disabled = true;
 
                     const formData = new FormData();
                     formData.append("message", text);
@@ -747,10 +839,22 @@
                         headers: { "X-CSRFToken": csrftoken },
                         body: formData
                     })
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error("Network response was not ok");
+                            return res.json();
+                        })
                         .then(data => {
-                            chatMessages.innerHTML += `<div class="message bot-message">${data.reply}</div>`;
+                            chatMessages.innerHTML += `<div class="message bot-message">${data.reply || data.error}</div>`;
                             chatMessages.scrollTop = chatMessages.scrollHeight;
+                        })
+                        .catch(err => {
+                            chatMessages.innerHTML += `<div class="message bot-message" style="color: #d32f2f;"><i class="fas fa-exclamation-circle"></i> Connection lost. Please check your internet or try again later.</div>`;
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        })
+                        .finally(() => {
+                            chatInput.disabled = false;
+                            chatButton.disabled = false;
+                            chatInput.focus();
                         });
                 }
 

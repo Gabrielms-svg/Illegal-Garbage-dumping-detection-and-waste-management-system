@@ -10,7 +10,7 @@ from datetime import datetime
 
 CAMERA_ID = "cam_01"
 CAMERA_LOCATION = "MG Road, Kochi"
-RTSP_URL = "rtsp://localhost:8554/cam1"   # for future use
+RTSP_URL = "http://192.168.0.102:8080/video"   # for future use
 
 # ------------------ PATH SETUP (IMPORTANT FIX) ------------------
 
