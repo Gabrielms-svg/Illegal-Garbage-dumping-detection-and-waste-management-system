@@ -147,6 +147,15 @@ class GarbageReport(models.Model):
     location = models.CharField(max_length=255)
     description = models.TextField()
     severity = models.CharField(max_length=10)
+    status = models.CharField(
+        max_length=50,
+        choices=[
+            ('under_investigation', 'Under Investigation'),
+            ('action_taken', 'Action Taken'),
+            ('action_not_taken', 'Action Not Taken'),
+        ],
+        default='under_investigation'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
 

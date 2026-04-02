@@ -107,12 +107,14 @@ def user_dashboard(request):
     if 'normal_user_id' not in request.session:
         return redirect('user_login')
     user = Normal_user.objects.get(id=request.session['normal_user_id'])
+    
+    reports = GarbageReport.objects.filter(user=user).order_by('-created_at')
 
     context = {
         'logged_user': user,
-
+        'reports': reports,
     }
-    return render(request, 'user_dashboard.html')
+    return render(request, 'user_dashboard.html', context)
 
 
 @csrf_exempt
@@ -654,5 +656,21 @@ def analytics_dashboard(request):
         "camera_labels": camera_labels,
         "camera_efficiency_counts": camera_efficiency_counts,
     }
-
     return render(request, "analytics.html", context)
+
+@require_POST
+def update_report_status(request):
+    if 'authority_user_id' not in request.session:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+        
+    try:
+        data = json.loads(request.body)
+        report_id = data.get("report_id")
+        status = data.get("status")
+        
+        report = get_object_or_404(GarbageReport, id=report_id)
+        report.status = status
+        report.save()
+        return JsonResponse({"message": "Status updated successfully"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)

@@ -627,6 +627,52 @@
 
 
         </div>
+
+        <!-- Dashboard Grid row 2 -->
+        <div class="dashboard-grid">
+            <!-- My Reported Cases Card -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-header">
+                    <h3><i class="fas fa-list card-icon"></i> My Reported Cases</h3>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background-color: var(--light-bg); border-bottom: 2px solid #ddd;">
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Date &amp; Time</th>
+                                <th style="padding: 10px;">Location</th>
+                                <th style="padding: 10px;">Severity</th>
+                                <th style="padding: 10px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for report in reports %}
+                            <tr style="border-bottom: 1px solid #eee;">
+                                <td style="padding: 10px;">#USR-{{ report.id }}</td>
+                                <td style="padding: 10px;">{{ report.created_at|date:"Y-m-d H:i" }}</td>
+                                <td style="padding: 10px;">{{ report.location }}</td>
+                                <td style="padding: 10px;">{{ report.severity|title }}</td>
+                                <td style="padding: 10px;">
+                                    <span style="padding: 5px 10px; border-radius: 20px; font-size: 0.85em;
+                                        {% if report.status == 'under_investigation' %}background-color: #fff3e0; color: #ef6c00;
+                                        {% elif report.status == 'action_taken' %}background-color: #e8f5e9; color: #2e7d32;
+                                        {% else %}background-color: #ffebee; color: #c62828;{% endif %}">
+                                        {{ report.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px;">You have not reported any cases yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
         <!-- Footer -->
         <div class="footer-container"
             style="display: flex; justify-content: center; width: 100%; background-color: #fff; margin-top: 2rem;">

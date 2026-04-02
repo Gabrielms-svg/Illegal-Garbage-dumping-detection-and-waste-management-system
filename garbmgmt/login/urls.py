@@ -20,6 +20,7 @@ urlpatterns = [
     path('camera/live/05/', views.live_camera_feed, name='camera05'),
     path("submit-report/", views.submit_garbage_report, name="submit_garbage_report"),
     path("authority/user-reports/", views.user_reports,name='user_reports'),
+    path("authority/update-report-status/", views.update_report_status, name='update_report_status'),
     path("authority/user-reports/<int:report_id>/download/",views.download_report_zip,name="download_report_zip"),
     path("authority/user-report/<int:report_id>/media/",views.get_report_media,name="get_report_media"),
     path("authority/cctv-events/", views.api_cctv_events, name="cctv_events_api"),

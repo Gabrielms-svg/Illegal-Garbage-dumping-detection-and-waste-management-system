@@ -824,6 +824,7 @@
                 <th>Reported At</th>
                 <th>Location</th>
                 <th>Media</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -845,6 +846,15 @@
                   {% else %}
                   —
                   {% endif %}
+                </td>
+
+                <!-- Status column -->
+                <td>
+                  <select data-report-id="{{ report.id }}" onchange="updateReportStatus(this)" class="status-dropdown" style="padding: 5px; border-radius: 4px; border: 1px solid #ddd;">
+                    <option value="under_investigation" {% if report.status == 'under_investigation' %}selected{% endif %}>Under Investigation</option>
+                    <option value="action_taken" {% if report.status == 'action_taken' %}selected{% endif %}>Action Taken</option>
+                    <option value="action_not_taken" {% if report.status == 'action_not_taken' %}selected{% endif %}>Action Not Taken</option>
+                  </select>
                 </td>
 
                 <!-- Actions column -->
@@ -1386,6 +1396,33 @@
         console.log("Filtering by status:", this.value);
         // In a real app, this would filter the offences table
       });
+
+      function updateReportStatus(selectElement) {
+        const reportId = selectElement.getAttribute('data-report-id');
+        const newStatus = selectElement.value;
+        
+        fetch("/authority/update-report-status/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            report_id: reportId,
+            status: newStatus
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.message) {
+            console.log(data.message);
+            // Optionally show a toast notification
+          } else {
+            alert("Failed to update status: " + data.error);
+          }
+        })
+        .catch(err => console.error(err));
+      }
 
       // Download functions
       function downloadReport(reportId) {
