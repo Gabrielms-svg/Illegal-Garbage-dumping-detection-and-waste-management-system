@@ -738,12 +738,12 @@
               <option value="location">Sort by: Location</option>
             </select>
 
-            <input type="date" id="date-filter" value="2023-10-15" />
+            <input type="date" id="date-filter" />
 
 
           </div>
 
-          <button class="btn btn-secondary">
+          <button class="btn btn-secondary" id="cctv-refresh-btn">
             <i class="fas fa-sync-alt"></i> Refresh
           </button>
         </div>
@@ -1376,27 +1376,6 @@
     <script>
       // JavaScript for interactive elements
 
-      // Sort offences table
-      const sortSelect = document.getElementById("sort-by");
-      const dateFilter = document.getElementById("date-filter");
-      const statusFilter = document.getElementById("status-filter");
-
-      sortSelect.addEventListener("change", function () {
-        console.log("Sorting by:", this.value);
-        // In a real app, this would trigger an API call or page refresh
-        // with the new sorting parameter
-      });
-
-      dateFilter.addEventListener("change", function () {
-        console.log("Filtering by date:", this.value);
-        // In a real app, this would filter the offences table
-      });
-
-      statusFilter.addEventListener("change", function () {
-        console.log("Filtering by status:", this.value);
-        // In a real app, this would filter the offences table
-      });
-
       function updateReportStatus(selectElement) {
         const reportId = selectElement.getAttribute('data-report-id');
         const newStatus = selectElement.value;
@@ -1907,7 +1886,7 @@
       const apiCctvTableBody = document.querySelector(".offences-table tbody");
       const apiSortSelect = document.getElementById("sort-by");
       const apiDateFilter = document.getElementById("date-filter");
-      const apiRefreshBtn = document.querySelector(".filters-bar .btn-secondary"); // Refresh button
+      const apiRefreshBtn = document.getElementById("cctv-refresh-btn"); // Refresh button
 
       function loadCCTVEvents() {
         const sortBy = apiSortSelect.value;

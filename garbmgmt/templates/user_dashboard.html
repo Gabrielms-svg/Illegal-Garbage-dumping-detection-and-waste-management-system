@@ -478,7 +478,32 @@
             justify-content: center;
             background-color: var(--primary-color);
         }
+
+        /* Report status badges */
+        .status-badge-user {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-investigating {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-action-taken {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-action-not-taken {
+            background-color: #ffebee;
+            color: #c62828;
+        }
     </style>
+
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
@@ -655,10 +680,10 @@
                                 <td style="padding: 10px;">{{ report.location }}</td>
                                 <td style="padding: 10px;">{{ report.severity|title }}</td>
                                 <td style="padding: 10px;">
-                                    <span style="padding: 5px 10px; border-radius: 20px; font-size: 0.85em;
-                                        {% if report.status == 'under_investigation' %}background-color: #fff3e0; color: #ef6c00;
-                                        {% elif report.status == 'action_taken' %}background-color: #e8f5e9; color: #2e7d32;
-                                        {% else %}background-color: #ffebee; color: #c62828;{% endif %}">
+                                    <span class="status-badge-user
+                                        {% if report.status == 'under_investigation' %}status-investigating
+                                        {% elif report.status == 'action_taken' %}status-action-taken
+                                        {% else %}status-action-not-taken{% endif %}">
                                         {{ report.get_status_display }}
                                     </span>
                                 </td>

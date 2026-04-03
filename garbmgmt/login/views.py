@@ -247,7 +247,7 @@ def delete_location(request):
         is_active=True
     )
 
-    # ✅ SOFT DELETE
+    #  SOFT DELETE
     location.is_active = False
     location.save()
 
