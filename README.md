@@ -93,3 +93,58 @@ Psutil: 7.1.3
 NetworkX: 3.6.1
 
 SymPy: 1.14.0
+
+
+Deployment & Environment variables
+----------------------------------
+Use environment variables to configure runtime settings and keep secrets out of source control. Below are the environment variables supported by the project's settings package and example commands to run locally.
+
+Required (production):
+- `DJANGO_SECRET_KEY`: strong secret key (must be set in production).
+- `DJANGO_ALLOWED_HOSTS`: comma-separated hosts (e.g. `example.com,www.example.com`).
+
+Common optional vars:
+- `DJANGO_ENV`: `production` or `development` (controls default settings selection).
+- `DJANGO_SETTINGS_MODULE`: explicit settings module (e.g. `garbmgmt.settings.production`). If set, it overrides `DJANGO_ENV`.
+- `DJANGO_DEBUG`: `True` or `False` (development override).
+- `DJANGO_TIME_ZONE`: timezone (default from base settings).
+
+Database (override defaults):
+- `DJANGO_DB_ENGINE` (e.g. `django.db.backends.mysql`)
+- `DJANGO_DB_NAME`
+- `DJANGO_DB_USER`
+- `DJANGO_DB_PASSWORD`
+- `DJANGO_DB_HOST`
+- `DJANGO_DB_PORT`
+
+Security / production flags (optional):
+- `DJANGO_SECURE_SSL_REDIRECT` (True/False)
+- `DJANGO_HSTS_SECONDS`
+
+Example (PowerShell - development):
+```
+$env:DJANGO_SETTINGS_MODULE = 'garbmgmt.settings.development'
+$env:DJANGO_SECRET_KEY = 'dev-secret-change-me'
+python manage.py runserver 0.0.0.0:8000
+```
+
+Example (bash - development):
+```
+export DJANGO_SETTINGS_MODULE=garbmgmt.settings.development
+export DJANGO_SECRET_KEY='dev-secret-change-me'
+python manage.py runserver 0.0.0.0:8000
+```
+
+Example (production container): set env vars in your container/orchestration platform and ensure `DJANGO_SECRET_KEY` and `DJANGO_ALLOWED_HOSTS` are present. To use the production settings via `DJANGO_ENV`:
+```
+export DJANGO_ENV=production
+export DJANGO_SECRET_KEY='your-strong-secret'
+export DJANGO_ALLOWED_HOSTS='example.com,www.example.com'
+gunicorn garbmgmt.wsgi:application
+```
+
+Notes:
+- Do NOT commit `DJANGO_SECRET_KEY` or DB credentials into source control.
+- Consider using a secrets manager (AWS Secrets Manager, Azure Key Vault) or a `.env` file managed outside of Git for local convenience.
+- After changing static configuration, run `python manage.py collectstatic` in production.
+
