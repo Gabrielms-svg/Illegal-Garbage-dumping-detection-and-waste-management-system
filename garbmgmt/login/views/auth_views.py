@@ -1,11 +1,14 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from ..models import (
+    User,
     Normal_user,
     Authority_user,
     GarbageReport,
@@ -36,6 +39,11 @@ def user_register(request):
             messages.error(request, 'Passwords do not match.')
             return redirect('user_register')
 
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'Email already registered.')
+            return redirect('user_register')
+
+        User.objects.create_user(email=email, password=password2, first_name=fullname)
         Normal_user.objects.create(
             profile=profile,
             phone=phone,
@@ -52,18 +60,32 @@ def user_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        try:
-            user = Normal_user.objects.get(email=email)
-            if check_password(password, user.password):
-                request.session['normal_user_id'] = user.id
-                request.session['normal_user_name'] = user.fullname
-                return redirect('user_dashboard')
+        user = authenticate(request, email=email, password=password)
+        if user is not None and not user.is_staff:
+            login(request, user)
+            return redirect('user_dashboard')
 
-            messages.error(request, 'Invalid password')
-            return redirect('user_login')
+        try:
+            normal_profile = Normal_user.objects.get(email=email)
         except Normal_user.DoesNotExist:
-            messages.error(request, 'User not found')
+            messages.error(request, 'Invalid login credentials')
             return redirect('user_login')
+
+        if not check_password(password, normal_profile.password):
+            messages.error(request, 'Invalid login credentials')
+            return redirect('user_login')
+
+        user, created = User.objects.get_or_create(
+            email=normal_profile.email,
+            defaults={'first_name': normal_profile.fullname},
+        )
+
+        if created or not user.has_usable_password():
+            user.set_password(password)
+            user.save()
+
+        login(request, user)
+        return redirect('user_dashboard')
 
     return render(request, 'user_login.html')
 
@@ -74,15 +96,32 @@ def auth_login(request):
         password = request.POST.get('password')
 
         try:
-            user = Authority_user.objects.get(auth_id=auth_id)
-            if user.password == password:
-                request.session['authority_user_id'] = user.id
-                request.session['authority_user_name'] = user.first_name
-                messages.success(request, 'Authority Login Successful!')
-                return redirect('auth_dashboard')
+            authority_profile = Authority_user.objects.get(auth_id=auth_id)
+            if authority_profile.password != password:
+                messages.error(request, 'Invalid password!')
+                return redirect('auth_login')
 
-            messages.error(request, 'Invalid password!')
-            return redirect('auth_login')
+            auth_user, created = User.objects.get_or_create(
+                email=authority_profile.email,
+                defaults={
+                    'first_name': authority_profile.first_name,
+                    'is_staff': True,
+                }
+            )
+            if created:
+                auth_user.set_password(password)
+                auth_user.save()
+            elif not auth_user.check_password(password):
+                messages.error(request, 'Invalid password!')
+                return redirect('auth_login')
+
+            if not auth_user.is_staff:
+                auth_user.is_staff = True
+                auth_user.save()
+
+            login(request, auth_user)
+            messages.success(request, 'Authority Login Successful!')
+            return redirect('auth_dashboard')
         except Authority_user.DoesNotExist:
             messages.error(request, 'Invalid Authority ID!')
             return redirect('auth_login')
@@ -90,30 +129,32 @@ def auth_login(request):
     return render(request, 'auth_login.html')
 
 
+@login_required(login_url='user_login')
 def user_dashboard(request):
-    if 'normal_user_id' not in request.session:
+    try:
+        profile = Normal_user.objects.get(email=request.user.email)
+    except Normal_user.DoesNotExist:
+        messages.error(request, 'User profile not found.')
         return redirect('user_login')
 
-    user = Normal_user.objects.get(id=request.session['normal_user_id'])
-    reports = GarbageReport.objects.filter(user=user).order_by('-created_at')
-
-    return render(request, 'user_dashboard.html', {'logged_user': user, 'reports': reports})
+    reports = GarbageReport.objects.filter(user=profile).order_by('-created_at')
+    return render(request, 'user_dashboard.html', {'logged_user': profile, 'reports': reports})
 
 
 def user_logout(request):
-    if 'normal_user_id' in request.session:
-        del request.session['normal_user_id']
+    logout(request)
     return redirect('user_login')
 
 
 def auth_logout(request):
-    request.session.flush()
+    logout(request)
     messages.success(request, 'Logged out successfully.')
     return redirect('home')
 
 
+@login_required(login_url='auth_login')
 def auth_dashboard(request):
-    if 'authority_user_id' not in request.session:
+    if not request.user.is_staff:
         return redirect('auth_login')
 
     reports = GarbageReport.objects.prefetch_related('evidences').order_by('-created_at')
@@ -145,13 +186,18 @@ def auth_dashboard(request):
     )
 
 
+@login_required(login_url='auth_login')
 def save_location(request):
-    authority_id = request.session.get('authority_user_id')
-    if not authority_id:
-        return JsonResponse({'error': 'Not logged in'}, status=401)
+    if not request.user.is_staff:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
 
     if request.method != 'POST':
         return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    try:
+        authority = Authority_user.objects.get(email=request.user.email)
+    except Authority_user.DoesNotExist:
+        return JsonResponse({'error': 'Authority profile not found'}, status=403)
 
     data = json.loads(request.body)
     LegalDumpingLocation.objects.create(
@@ -159,7 +205,7 @@ def save_location(request):
         location_type=data.get('type'),
         latitude=data.get('lat'),
         longitude=data.get('lng'),
-        added_by_id=authority_id,
+        added_by=authority,
     )
 
     return JsonResponse({'status': 'success'})
@@ -180,12 +226,17 @@ def get_locations(request):
     return JsonResponse(data, safe=False)
 
 
+@login_required(login_url='auth_login')
 def delete_location(request):
     if request.method != 'POST':
         return JsonResponse({'status': 'invalid'}, status=400)
 
-    authority_id = request.session.get('authority_user_id')
-    if not authority_id:
+    if not request.user.is_staff:
+        return JsonResponse({'status': 'unauthorized'}, status=403)
+
+    try:
+        authority = Authority_user.objects.get(email=request.user.email)
+    except Authority_user.DoesNotExist:
         return JsonResponse({'status': 'unauthorized'}, status=403)
 
     try:
@@ -197,7 +248,7 @@ def delete_location(request):
     location = get_object_or_404(
         LegalDumpingLocation,
         id=location_id,
-        added_by_id=authority_id,
+        added_by=authority,
         is_active=True,
     )
     location.is_active = False

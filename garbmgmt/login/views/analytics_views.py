@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from ..models import DumpingEvent, GarbageReport, GarbageEvidence
 
 
+@login_required(login_url='auth_login')
 def analytics_dashboard(request):
-    if 'authority_user_id' not in request.session:
+    if not request.user.is_staff:
         return redirect('auth_login')
 
     cctv_time_qs = (

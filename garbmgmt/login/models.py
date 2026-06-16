@@ -37,8 +37,8 @@ class User(AbstractUser):
     class Meta:
         db_table = 'user'
 
-    def _str_(self):
-        return self.fullname
+    def __str__(self):
+        return self.email
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -52,8 +52,8 @@ class Normal_user(models.Model):
     password = models.CharField(max_length=255)
 
 
-    def _str_(self):
-        return f"{self.first_name} {self.last_name}"
+    def __str__(self):
+        return self.fullname
     
     class Meta:
         db_table = 'normal_user'  # Change table name here
@@ -70,7 +70,7 @@ class Authority_user(models.Model):
     password = models.CharField(max_length=256) 
   
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
     class Meta:

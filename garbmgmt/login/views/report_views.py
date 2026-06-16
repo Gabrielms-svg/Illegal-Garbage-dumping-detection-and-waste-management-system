@@ -4,16 +4,17 @@ import zipfile
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from ..models import GarbageReport, GarbageEvidence, Normal_user
 
 
+@login_required(login_url='user_login')
 @require_POST
 def submit_garbage_report(request):
-    user_id = request.session.get('normal_user_id')
-    if not user_id:
-        return JsonResponse({'error': 'User not authenticated'}, status=401)
-
-    user = Normal_user.objects.get(id=user_id)
+    try:
+        user = Normal_user.objects.get(email=request.user.email)
+    except Normal_user.DoesNotExist:
+        return JsonResponse({'error': 'User profile not found'}, status=401)
     location = request.POST.get('location')
     description = request.POST.get('description')
     severity = request.POST.get('severity')
@@ -35,7 +36,11 @@ def submit_garbage_report(request):
     return JsonResponse({'message': 'Garbage report submitted successfully', 'report_id': report.id})
 
 
+@login_required(login_url='auth_login')
 def user_reports(request):
+    if not request.user.is_staff:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
     reports = GarbageReport.objects.prefetch_related('evidences').order_by('-created_at')
     data = [
         {
@@ -50,7 +55,11 @@ def user_reports(request):
     return JsonResponse(data, safe=False)
 
 
+@login_required(login_url='auth_login')
 def download_report_zip(request, report_id):
+    if not request.user.is_staff:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
     report = get_object_or_404(GarbageReport, id=report_id)
     buffer = io.BytesIO()
 
@@ -64,7 +73,11 @@ def download_report_zip(request, report_id):
     return response
 
 
+@login_required(login_url='auth_login')
 def get_report_media(request, report_id):
+    if not request.user.is_staff:
+        return JsonResponse({'error': 'Forbidden'}, status=403)
+
     evidences = GarbageEvidence.objects.filter(report_id=report_id)
     files = [
         {
@@ -76,9 +89,10 @@ def get_report_media(request, report_id):
     return JsonResponse({'files': files})
 
 
+@login_required(login_url='auth_login')
 @require_POST
 def update_report_status(request):
-    if 'authority_user_id' not in request.session:
+    if not request.user.is_staff:
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     try:

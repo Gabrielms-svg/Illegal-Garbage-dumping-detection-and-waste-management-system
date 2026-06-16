@@ -2,6 +2,7 @@ import csv
 import cv2
 from django.http import StreamingHttpResponse, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 from ..models import DumpingEvent
 from datetime import datetime
@@ -70,8 +71,9 @@ def cctv_event_detail(request, id):
     })
 
 
+@login_required(login_url='auth_login')
 def api_cctv_events(request):
-    if 'authority_user_id' not in request.session:
+    if not request.user.is_staff:
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     qs = DumpingEvent.objects.select_related('camera').prefetch_related('plates')
