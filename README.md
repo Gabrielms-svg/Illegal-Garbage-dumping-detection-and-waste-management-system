@@ -13,6 +13,44 @@ Illegal waste dumping remains a significant environmental and public health chal
 
 ⚠️ Note: This project uses CUDA 11.8-enabled PyTorch for GPU-accelerated inference
 
+
+Quick Start (Local Development)
+------------------------------
+Automated startup scripts are provided to simplify the local development process. They start all required services (mediamtx, rtsp processor, and Django) automatically.
+
+**Windows PowerShell (recommended):**
+```powershell
+.\start-dev.ps1
+```
+If you get an execution policy error, run PowerShell as Administrator and execute:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+**Windows Command Prompt (cmd):**
+```cmd
+start-dev.bat
+```
+
+**Manual startup (if scripts don't work):**
+```powershell
+# Terminal 1: Start mediamtx
+cd garbmgmt\login\cctvcamstream\mediamtx_v1.15.6_windows_amd64
+.\mediamtx.exe
+
+# Terminal 2: Start RTSP processor
+garbenv\Scripts\activate
+cd garbmgmt\login\cctvcamstream
+python rtsp.py
+
+# Terminal 3: Start Django
+garbenv\Scripts\activate
+cd garbmgmt
+python manage.py runserver
+```
+
+Access the application at http://127.0.0.1:8000/
+
 requirements :
 --------------
 
